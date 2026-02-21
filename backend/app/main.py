@@ -50,23 +50,37 @@ async def startup_event():
     """Initialize models on startup"""
     global clip_model, faiss_index
     
+    from app.utils.redis_cache import RedisCacheManager
+    from app.services.search_service import initialize_search_service
+    
+    logger.info("Starting up application...")
+    
     try:
+        # Initialize CLIP model
         logger.info("Loading CLIP model...")
-        clip_model = CLIPModel()
-        
-        logger.info("Loading FAISS index...")
-        faiss_index = FAISSIndex()
-        
-        # Store models in app state
+        clip_model = CLIPModel(model_name="ViT-B/32")
         app.state.clip_model = clip_model
+        
+        # Initialize FAISS index
+        logger.info("Loading FAISS index...")
+        faiss_index = FAISSIndex(embedding_dim=512, index_type="HNSW")
         app.state.faiss_index = faiss_index
         
-        logger.info("Models loaded successfully!")
+        # Initialize Redis cache
+        logger.info("Connecting to Redis cache...")
+        cache = RedisCacheManager()
+        app.state.cache = cache
+        
+        # Initialize search service
+        logger.info("Initializing search service...")
+        search_service = initialize_search_service(clip_model, faiss_index, cache)
+        app.state.search_service = search_service
+        
+        logger.info("Application startup complete!")
         
     except Exception as e:
-        logger.error(f"Error loading models: {e}")
-        # Continue without models for now
-        pass
+        logger.error(f"Startup failed: {e}")
+        raise
 
 @app.get("/")
 async def root():

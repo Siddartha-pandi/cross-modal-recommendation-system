@@ -214,14 +214,6 @@ class SearchService:
         
         fetch_time = time.time() - fetch_start
         logger.info(f"Fetched {len(raw_products)} products in {fetch_time:.3f}s")
-            )
-        else:
-            raw_products = await self.ecommerce_fetcher.search_all(
-                search_text, max_results_per_source=fetch_count_per_source
-            )
-        
-        fetch_time = time.time() - fetch_start
-        logger.info(f"Fetched {len(raw_products)} products in {fetch_time:.3f}s")
         
         if not raw_products:
             return {
