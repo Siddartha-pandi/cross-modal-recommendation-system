@@ -5,6 +5,8 @@ export const AI_SEARCH_CONFIG = {
   textWeight: 0.5,
   fusionMethod: 'weighted_avg' as const,
   enableReranking: true,
+  rerankingMethod: 'cross_attention' as const,
+  diversityWeight: 0.1,
 };
 
 // Product Categories - Fashion Products Only

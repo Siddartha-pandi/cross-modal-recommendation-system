@@ -27,8 +27,12 @@ async def generate_embeddings():
     # Initialize CLIP model
     clip_model = CLIPModel()
     
-    # Load product catalog
-    catalog_path = "/app/data/products.json"
+    # Load product catalog - use relative path from backend directory
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    backend_dir = os.path.dirname(script_dir)
+    project_dir = os.path.dirname(backend_dir)
+    catalog_path = os.path.join(project_dir, "data", "products.json")
+    
     if not os.path.exists(catalog_path):
         logger.error(f"Product catalog not found at {catalog_path}")
         return
@@ -56,37 +60,50 @@ async def generate_embeddings():
         batch_metadata = []
         
         for product in batch:
-            # Load image
-            image_path = f"/app/data/images/{product['image']}"
+            # Always add product (with text or combined text+image)
+            text = f"{product['title']}. {product.get('description', '')}"
+            texts.append(text)
+            
+            # Load image if available
+            image_path = os.path.join(project_dir, "data", "images", product['image'])
             if os.path.exists(image_path):
                 try:
                     image = Image.open(image_path).convert('RGB')
                     images.append(image)
-                    texts.append(product['title'])
-                    batch_metadata.append({
-                        'product_id': product['id'],
-                        'title': product['title'],
-                        'image_url': f"/images/{product['image']}",
-                        'category': product.get('category', ''),
-                        'price': product.get('price', 0.0)
-                    })
                 except Exception as e:
                     logger.warning(f"Failed to load image {image_path}: {e}")
-                    continue
+                    images.append(None)
             else:
-                logger.warning(f"Image not found: {image_path}")
-                continue
+                # No image available, will use text-only
+                images.append(None)
+                
+            batch_metadata.append({
+                'product_id': product['id'],
+                'title': product['title'],
+                'image_url': f"/images/{product['image']}",
+                'category': product.get('category', ''),
+                'price': product.get('price', 0.0)
+            })
         
-        if not images:
+        if not texts:
             continue
         
         # Generate embeddings
         try:
-            image_embeddings = await clip_model.encode_batch_images(images)
             text_embeddings = await clip_model.encode_batch_texts(texts)
             
-            # Combine embeddings (weighted average)
-            combined_embeddings = 0.7 * image_embeddings + 0.3 * text_embeddings
+            # Check if we have any valid images
+            valid_images = [img for img in images if img is not None]
+            
+            if valid_images and len(valid_images) == len(texts):
+                # All images available - use combined embeddings
+                image_embeddings = await clip_model.encode_batch_images(valid_images)
+                combined_embeddings = 0.7 * image_embeddings + 0.3 * text_embeddings
+                logger.info(f"Batch {i}: Using combined image+text embeddings")
+            else:
+                # Use text-only embeddings
+                combined_embeddings = text_embeddings
+                logger.info(f"Batch {i}: Using text-only embeddings (images not available)")
             
             # Normalize
             combined_embeddings = combined_embeddings / np.linalg.norm(
@@ -111,7 +128,7 @@ async def generate_embeddings():
         faiss_index.save_index()
         
         logger.info(f"Generated embeddings for {len(metadata_list)} products")
-        logger.info(f"Saved FAISS index with {faiss_index.get_total_products()} products")
+        logger.info(f"Saved FAISS index successfully")
     else:
         logger.error("No embeddings generated")
 

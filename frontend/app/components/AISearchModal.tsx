@@ -4,6 +4,8 @@ import React, { useState } from 'react';
 import SimpleSearchInterface from './SimpleSearchInterface';
 import WorkflowSearchResults from './WorkflowSearchResults';
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? '/api/v1';
+
 interface SearchParameters {
   text?: string;
   imageFile?: File;
@@ -129,7 +131,7 @@ const searchWithCLIP = async (query: string, imageFile?: File): Promise<SearchRe
       requestData.image = base64Image;
     }
     
-    const response = await fetch('http://localhost:8000/api/v1/search/workflow', {
+    const response = await fetch(`${API_BASE_URL}/search/workflow`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

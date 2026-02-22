@@ -3,6 +3,7 @@ E-commerce Product Fetchers - FREE APIs Version
 Uses 100% FREE public APIs - NO authentication required:
 - DummyJSON API: Free product data (https://dummyjson.com)
 - FakeStoreAPI: Alternative free products (https://fakestoreapi.com)
+- Platzi Fake Store API: Free product data (https://api.escuelajs.co/api/v1)
 - No signup, no API keys, completely free!
 """
 
@@ -234,6 +235,80 @@ class FlipkartFetcher:
             return []
 
 
+class PlatziFetcher:
+    """Fetch products using Platzi Fake Store API - 100% FREE, no signup!"""
+
+    def __init__(self):
+        self.base_url = "https://api.escuelajs.co/api/v1"
+        self.enabled = True
+
+    def _extract_image(self, images: Any) -> str:
+        if isinstance(images, list) and images:
+            for image in images:
+                if isinstance(image, str) and image.strip():
+                    return image
+        if isinstance(images, str):
+            return images
+        return ""
+
+    async def search(self, query: str, max_results: int = 20) -> List[Product]:
+        """Search products using Platzi Fake Store API"""
+        try:
+            async with httpx.AsyncClient(timeout=15.0) as client:
+                params = {"limit": max(max_results, 50), "offset": 0}
+                response = await client.get(f"{self.base_url}/products", params=params)
+                response.raise_for_status()
+                data = response.json()
+
+                query_lower = query.lower().strip()
+                products = []
+
+                for item in data:
+                    title = item.get("title", "")
+                    desc = item.get("description", "")
+                    category_name = (item.get("category") or {}).get("name", "")
+
+                    title_lower = title.lower()
+                    desc_lower = desc.lower()
+                    category_lower = category_name.lower()
+
+                    if query_lower in title_lower or query_lower in desc_lower or query_lower in category_lower:
+                        products.append(Product(
+                            product_id=f"platzi_{item.get('id')}",
+                            title=title,
+                            description=desc,
+                            image_url=self._extract_image(item.get("images", [])),
+                            price=float(item.get("price", 0)),
+                            source="Platzi",
+                            buy_url=f"{self.base_url}/products/{item.get('id')}",
+                            category=category_name or "General",
+                            brand="Platzi",
+                            rating=4.1
+                        ))
+
+                if not products:
+                    for item in data[:max_results]:
+                        products.append(Product(
+                            product_id=f"platzi_{item.get('id')}",
+                            title=item.get("title", ""),
+                            description=item.get("description", ""),
+                            image_url=self._extract_image(item.get("images", [])),
+                            price=float(item.get("price", 0)),
+                            source="Platzi",
+                            buy_url=f"{self.base_url}/products/{item.get('id')}",
+                            category=(item.get("category") or {}).get("name", "General"),
+                            brand="Platzi",
+                            rating=4.1
+                        ))
+
+                logger.info(f"Platzi API returned {len(products[:max_results])} products")
+                return products[:max_results]
+
+        except Exception as e:
+            logger.error(f"Platzi API error: {e}")
+            return []
+
+
 class MyntraFetcher:
     """Fetch products using DummyJSON Fashion APIs - 100% FREE"""
     
@@ -417,6 +492,203 @@ class MeeshoFetcher:
         return []
 
 
+class ShopifyFetcher:
+    """Fetch products from Shopify stores using Storefront API"""
+    
+    def __init__(self, shop_name: Optional[str] = None, api_key: Optional[str] = None):
+        """
+        Initialize Shopify fetcher.
+        
+        Args:
+            shop_name: Shopify store name (e.g., "your-store" from your-store.myshopify.com)
+            api_key: Storefront API access token (optional for public stores)
+        """
+        self.shop_name = shop_name or "demo-store"  # Demo store for testing
+        self.api_key = api_key
+        self.base_url = f"https://{self.shop_name}.myshopify.com/api/2024-01/graphql.json"
+        self.enabled = True
+    
+    async def search(self, query: str, max_results: int = 20) -> List[Product]:
+        """Search products from Shopify using GraphQL API"""
+        try:
+            # Fallback to public demo products if no auth
+            if not self.api_key:
+                logger.info(f"Shopify fetcher: No API key configured, using demo data")
+                return await self._fetch_demo_products(query, max_results)
+            
+            async with httpx.AsyncClient(timeout=15.0) as client:
+                # GraphQL query to search products
+                query_str = """
+                {
+                    products(first: %d, query: "%s") {
+                        edges {
+                            node {
+                                id
+                                title
+                                description
+                                priceRange {
+                                    minVariantPrice {
+                                        amount
+                                    }
+                                }
+                                images(first: 1) {
+                                    edges {
+                                        node {
+                                            url
+                                        }
+                                    }
+                                }
+                                vendor
+                                productType
+                                handle
+                            }
+                        }
+                    }
+                }
+                """ % (max_results, query.lower())
+                
+                headers = {
+                    "X-Shopify-Storefront-Access-Token": self.api_key,
+                    "Content-Type": "application/json"
+                }
+                
+                response = await client.post(
+                    self.base_url,
+                    json={"query": query_str},
+                    headers=headers
+                )
+                
+                if response.status_code == 200:
+                    data = response.json()
+                    products = []
+                    
+                    if "data" in data and "products" in data["data"]:
+                        for edge in data["data"]["products"].get("edges", []):
+                            node = edge.get("node", {})
+                            
+                            # Extract price
+                            price = 0
+                            try:
+                                price = float(node.get("priceRange", {})
+                                            .get("minVariantPrice", {})
+                                            .get("amount", 0))
+                            except (ValueError, TypeError):
+                                price = 29.99  # Default price
+                            
+                            # Extract image
+                            image_url = ""
+                            try:
+                                image_url = (node.get("images", {})
+                                           .get("edges", [{}])[0]
+                                           .get("node", {})
+                                           .get("url", ""))
+                            except (IndexError, KeyError):
+                                image_url = ""
+                            
+                            products.append(Product(
+                                product_id=f"shopify_{node.get('id', '').split('/')[-1]}",
+                                title=node.get("title", ""),
+                                description=node.get("description", ""),
+                                image_url=image_url,
+                                price=price,
+                                source="Shopify",
+                                buy_url=f"https://{self.shop_name}.myshopify.com/products/{node.get('handle', '')}",
+                                category=node.get("productType", "General"),
+                                brand=node.get("vendor", "Shopify"),
+                                rating=4.5  # Shopify doesn't provide ratings in basic query
+                            ))
+                    
+                    logger.info(f"Shopify returned {len(products)} products")
+                    return products
+                else:
+                    logger.warning(f"Shopify API error: Status {response.status_code}")
+                    return await self._fetch_demo_products(query, max_results)
+                    
+        except Exception as e:
+            logger.error(f"Shopify fetcher error: {e}")
+            return await self._fetch_demo_products(query, max_results)
+    
+    async def _fetch_demo_products(self, query: str, max_results: int) -> List[Product]:
+        """Fallback: Fetch demo Shopify products for testing"""
+        # Demo products representing typical Shopify store items
+        demo_products = [
+            {
+                "id": "gid://shopify/Product/1",
+                "title": "Premium Cotton T-Shirt",
+                "description": "High-quality organic cotton t-shirt",
+                "price": 29.99,
+                "image": "https://via.placeholder.com/300?text=Cotton+TShirt",
+                "vendor": "Fashion Brand",
+                "handle": "cotton-tshirt"
+            },
+            {
+                "id": "gid://shopify/Product/2",
+                "title": "Classic Denim Jeans",
+                "description": "Comfortable and stylish denim jeans",
+                "price": 59.99,
+                "image": "https://via.placeholder.com/300?text=Denim+Jeans",
+                "vendor": "Denim Co",
+                "handle": "classic-jeans"
+            },
+            {
+                "id": "gid://shopify/Product/3",
+                "title": "Summer Linen Dress",
+                "description": "Light and breathable linen dress",
+                "price": 49.99,
+                "image": "https://via.placeholder.com/300?text=Linen+Dress",
+                "vendor": "Summer Collection",
+                "handle": "summer-dress"
+            },
+            {
+                "id": "gid://shopify/Product/4",
+                "title": "Leather Crossbody Bag",
+                "description": "Genuine leather crossbody bag",
+                "price": 79.99,
+                "image": "https://via.placeholder.com/300?text=Leather+Bag",
+                "vendor": "Leather Works",
+                "handle": "crossbody-bag"
+            },
+            {
+                "id": "gid://shopify/Product/5",
+                "title": "Canvas Sneakers",
+                "description": "Casual canvas sneakers",
+                "price": 44.99,
+                "image": "https://via.placeholder.com/300?text=Canvas+Sneakers",
+                "vendor": "Shoe Brand",
+                "handle": "canvas-sneakers"
+            },
+        ]
+        
+        # Filter by query
+        query_lower = query.lower()
+        filtered = [
+            p for p in demo_products
+            if query_lower in p["title"].lower() or query_lower in p["description"].lower()
+        ]
+        
+        # If no matches, return all
+        if not filtered:
+            filtered = demo_products
+        
+        products = []
+        for item in filtered[:max_results]:
+            products.append(Product(
+                product_id=f"shopify_{item['id'].split('/')[-1]}",
+                title=item["title"],
+                description=item["description"],
+                image_url=item["image"],
+                price=item["price"],
+                source="Shopify",
+                buy_url=f"https://shopify-demo.myshopify.com/products/{item['handle']}",
+                category="Fashion",
+                brand=item["vendor"],
+                rating=4.5
+            ))
+        
+        logger.info(f"Shopify (demo mode) returned {len(products)} demo products")
+        return products
+
+
 class EcommerceFetcher:
     """
     Main coordinator for fetching products from multiple e-commerce sources.
@@ -441,8 +713,17 @@ class EcommerceFetcher:
         self.myntra = MyntraFetcher()
         self.ikea = IKEAFetcher()
         self.meesho = MeeshoFetcher()
+
+        # Add Platzi fetcher
+        self.platzi = PlatziFetcher()
         
-        logger.info("E-commerce fetchers initialized")
+        # Add Shopify fetcher
+        self.shopify = ShopifyFetcher(
+            shop_name=config.get("shopify_store_name"),
+            api_key=config.get("shopify_api_key")
+        )
+        
+        logger.info("E-commerce fetchers initialized (7 sources)")
     
     async def search_all(self, query: str, max_results_per_source: int = 20) -> List[Product]:
         """
@@ -457,7 +738,9 @@ class EcommerceFetcher:
             self.flipkart.search(query, max_results_per_source),
             self.myntra.search(query, max_results_per_source),
             self.ikea.search(query, max_results_per_source),
-            self.meesho.search(query, max_results_per_source)
+            self.meesho.search(query, max_results_per_source),
+            self.shopify.search(query, max_results_per_source),
+            self.platzi.search(query, max_results_per_source)
         ]
         
         results = await asyncio.gather(*tasks, return_exceptions=True)
@@ -492,6 +775,10 @@ class EcommerceFetcher:
                 tasks.append(self.ikea.search(query, max_results_per_source))
             elif source.lower() == "meesho":
                 tasks.append(self.meesho.search(query, max_results_per_source))
+            elif source.lower() == "shopify":
+                tasks.append(self.shopify.search(query, max_results_per_source))
+            elif source.lower() == "platzi":
+                tasks.append(self.platzi.search(query, max_results_per_source))
         
         results = await asyncio.gather(*tasks, return_exceptions=True)
         

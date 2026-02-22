@@ -156,8 +156,17 @@ class FAISSIndex:
             if filter_categories and metadata.get('category') not in filter_categories:
                 continue
             
-            # Add similarity score to metadata
-            result = metadata.copy()
+            # Add similarity score to metadata - ensure all values are Python types
+            result = {}
+            for k, v in metadata.items():
+                if isinstance(v, np.ndarray):
+                    result[k] = v.tolist()
+                elif isinstance(v, (np.float32, np.float64)):
+                    result[k] = float(v)
+                elif isinstance(v, (np.int32, np.int64)):
+                    result[k] = int(v)
+                else:
+                    result[k] = v
             result['similarity_score'] = float(score)
             
             filtered_results.append(result)

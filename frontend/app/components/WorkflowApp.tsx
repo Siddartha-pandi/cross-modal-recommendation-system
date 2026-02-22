@@ -5,6 +5,8 @@ import WorkflowSearchInterface from './WorkflowSearchInterface';
 import WorkflowSearchResults from './WorkflowSearchResults';
 import { Search, Sparkles, Zap, TrendingUp, Bot, Cpu, Eye, Brain, Target } from 'lucide-react';
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? '/api/v1';
+
 interface SearchParameters {
   text?: string;
   imageFile?: File;
@@ -110,7 +112,7 @@ const WorkflowApp: React.FC = () => {
         formData.append('price_max', params.priceMax.toString());
       }
 
-      const response = await fetch('/api/search/workflow', {
+      const response = await fetch(`${API_BASE_URL}/search/workflow-multipart`, {
         method: 'POST',
         body: formData,
       });

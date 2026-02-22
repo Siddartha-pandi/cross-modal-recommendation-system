@@ -1,0 +1,72 @@
+[
+  {
+    "product_id": "dress_001",
+    "title": "Elegant Red Evening Dress",
+    "image_url": "/images/dress_001.jpg",
+    "category": "Dresses",
+    "price": 89.99
+  },
+  {
+    "product_id": "shoes_001",
+    "title": "Black Leather Boots",
+    "image_url": "/images/shoes_001.jpg",
+    "category": "Shoes",
+    "price": 129.99
+  },
+  {
+    "product_id": "bag_001",
+    "title": "Designer Handbag",
+    "image_url": "/images/bag_001.jpg",
+    "category": "Bags",
+    "price": 199.99
+  },
+  {
+    "product_id": "shirt_001",
+    "title": "White Cotton Shirt",
+    "image_url": "/images/shirt_001.jpg",
+    "category": "Shirts",
+    "price": 49.99
+  },
+  {
+    "product_id": "jeans_001",
+    "title": "Blue Denim Jeans",
+    "image_url": "/images/jeans_001.jpg",
+    "category": "Jeans",
+    "price": 79.99
+  },
+  {
+    "product_id": "watch_001",
+    "title": "Sport Watch",
+    "image_url": "/images/watch_001.jpg",
+    "category": "Accessories",
+    "price": 159.99
+  },
+  {
+    "product_id": "jacket_001",
+    "title": "Winter Coat",
+    "image_url": "/images/jacket_001.jpg",
+    "category": "Jackets",
+    "price": 189.99
+  },
+  {
+    "product_id": "sneakers_001",
+    "title": "Running Sneakers",
+    "image_url": "/images/sneakers_001.jpg",
+    "category": "Shoes",
+    "price": 119.99
+  },
+  {
+    "product_id": "dress_002",
+    "title": "Summer Floral Dress",
+    "image_url": "/images/dress_002.jpg",
+    "category": "Dresses",
+    "price": 69.99
+  },
+  {
+    "product_id": "hat_001",
+    "title": "Baseball Cap",
+    "image_url": "/images/hat_001.jpg",
+    "category": "Accessories",
+    "price": 24.99
+  }
+]

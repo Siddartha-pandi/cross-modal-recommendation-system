@@ -59,7 +59,13 @@ class CLIPModel:
     async def encode_text(self, text: str) -> np.ndarray:
         """
         Encode text to embedding vector
+        Automatically truncates text to fit within CLIP's context length (77 tokens).
         """
+        # Truncate text to fit within CLIP's context limit (~77 tokens, ~308 chars)
+        max_length = 250  # Safe buffer for 77 tokens
+        if len(text) > max_length:
+            text = text[:max_length].rsplit(' ', 1)[0] + "..."
+        
         # Tokenize text
         text_tokens = clip.tokenize([text]).to(self.device)
         
@@ -89,9 +95,18 @@ class CLIPModel:
     
     async def encode_batch_texts(self, texts: List[str]) -> np.ndarray:
         """
-        Encode batch of texts
+        Encode batch of texts.
+        Automatically truncates texts to fit within CLIP's context length (77 tokens).
         """
-        text_tokens = clip.tokenize(texts).to(self.device)
+        # Truncate all texts to fit within CLIP's context limit
+        max_length = 250
+        truncated_texts = []
+        for text in texts:
+            if len(text) > max_length:
+                text = text[:max_length].rsplit(' ', 1)[0] + "..."
+            truncated_texts.append(text)
+        
+        text_tokens = clip.tokenize(truncated_texts).to(self.device)
         
         with torch.no_grad():
             features = self.model.encode_text(text_tokens)

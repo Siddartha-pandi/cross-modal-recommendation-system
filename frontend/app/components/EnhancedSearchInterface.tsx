@@ -8,7 +8,7 @@ import ProductDetail from './ProductDetail';
 import TryOn3DViewer from './TryOn3DViewer';
 import ARTryOn from './ARTryOn';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
 
 interface Product {
   product_id: string;
@@ -488,7 +488,7 @@ export default function EnhancedSearchInterface() {
 
             {/* Source Filters */}
             <div className="mb-6">
-              <label className="flex items-center gap-2 text-sm font-bold text-gray-800 mb-3">{
+              <label className="flex items-center gap-2 text-sm font-bold text-gray-800 mb-3">
                 <ShoppingCart className="w-4 h-4 text-blue-600" />
                 E-Commerce Data Sources
               </label>

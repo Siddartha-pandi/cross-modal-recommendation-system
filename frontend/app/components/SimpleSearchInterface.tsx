@@ -3,10 +3,8 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { 
   Search, 
-  Upload, 
   X, 
   Zap,
-  Target,
   Info,
   Camera
 } from 'lucide-react';

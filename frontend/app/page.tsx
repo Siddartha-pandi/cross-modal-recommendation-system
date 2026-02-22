@@ -1,7 +1,7 @@
 'use client';
 
-import ECommerceApp from '@/components/ECommerceApp';
+import LandingPage from './components/LandingPage';
 
 export default function Home() {
-  return <ECommerceApp />;
+  return <LandingPage />;
 }

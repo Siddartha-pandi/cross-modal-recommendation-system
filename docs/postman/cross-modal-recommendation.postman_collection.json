@@ -1,0 +1,325 @@
+{
+  "info": {
+    "name": "Cross-Modal Recommendation API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8000"
+    },
+    {
+      "key": "apiBase",
+      "value": "/api/v1"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health (root)",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/health",
+          "host": ["{{baseUrl}}"],
+          "path": ["health"]
+        }
+      }
+    },
+    {
+      "name": "Workflow Search",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"text\": \"dress\",\n  \"top_k\": 6,\n  \"image_weight\": 0.7,\n  \"text_weight\": 0.3,\n  \"fusion_method\": \"weighted_avg\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}{{apiBase}}/search/workflow",
+          "host": ["{{baseUrl}}"],
+          "path": ["{{apiBase}}", "search", "workflow"]
+        }
+      }
+    },
+    {
+      "name": "Workflow Search (multipart)",
+      "request": {
+        "method": "POST",
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "text",
+              "value": "dress",
+              "type": "text"
+            },
+            {
+              "key": "image",
+              "type": "file"
+            },
+            {
+              "key": "top_k",
+              "value": "6",
+              "type": "text"
+            },
+            {
+              "key": "image_weight",
+              "value": "0.7",
+              "type": "text"
+            },
+            {
+              "key": "text_weight",
+              "value": "0.3",
+              "type": "text"
+            },
+            {
+              "key": "fusion_method",
+              "value": "weighted_avg",
+              "type": "text"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{baseUrl}}{{apiBase}}/search/workflow-multipart",
+          "host": ["{{baseUrl}}"],
+          "path": ["{{apiBase}}", "search", "workflow-multipart"]
+        }
+      }
+    },
+    {
+      "name": "Workflow Info",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}{{apiBase}}/workflow/info",
+          "host": ["{{baseUrl}}"],
+          "path": ["{{apiBase}}", "workflow", "info"]
+        }
+      }
+    },
+    {
+      "name": "Embed Product",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"product_id\": \"demo-1\",\n  \"title\": \"Demo Product\",\n  \"image_path\": \"data/images/demo.jpg\",\n  \"category\": \"Clothing\",\n  \"price\": 49.99\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}{{apiBase}}/embed",
+          "host": ["{{baseUrl}}"],
+          "path": ["{{apiBase}}", "embed"]
+        }
+      }
+    },
+    {
+      "name": "Index Status",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}{{apiBase}}/index/status",
+          "host": ["{{baseUrl}}"],
+          "path": ["{{apiBase}}", "index", "status"]
+        }
+      }
+    },
+    {
+      "name": "Index Health",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}{{apiBase}}/index/health",
+          "host": ["{{baseUrl}}"],
+          "path": ["{{apiBase}}", "index", "health"]
+        }
+      }
+    },
+    {
+      "name": "Index Rebuild",
+      "request": {
+        "method": "POST",
+        "url": {
+          "raw": "{{baseUrl}}{{apiBase}}/index/rebuild",
+          "host": ["{{baseUrl}}"],
+          "path": ["{{apiBase}}", "index", "rebuild"]
+        }
+      }
+    },
+    {
+      "name": "Index Debug",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}{{apiBase}}/index/debug?query_text=test%20query",
+          "host": ["{{baseUrl}}"],
+          "path": ["{{apiBase}}", "index", "debug"],
+          "query": [
+            {
+              "key": "query_text",
+              "value": "test query"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Upload Image",
+      "request": {
+        "method": "POST",
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "file",
+              "type": "file"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{baseUrl}}{{apiBase}}/upload",
+          "host": ["{{baseUrl}}"],
+          "path": ["{{apiBase}}", "upload"]
+        }
+      }
+    },
+    {
+      "name": "Enhanced Search",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"text\": \"blue shirt\",\n  \"image\": null,\n  \"priority\": {\n    \"image\": 0.6,\n    \"text\": 0.4\n  },\n  \"top_k\": 10,\n  \"sources\": [\"amazon\", \"flipkart\"]\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}{{apiBase}}/search/enhanced",
+          "host": ["{{baseUrl}}"],
+          "path": ["{{apiBase}}", "search", "enhanced"]
+        }
+      }
+    },
+    {
+      "name": "Advanced Search",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"text\": \"wedding dress\",\n  \"image\": null,\n  \"priority\": {\n    \"image\": 0.6,\n    \"text\": 0.4\n  },\n  \"top_k\": 10,\n  \"sources\": [\"myntra\", \"platzi\"],\n  \"enable_sentiment_scoring\": true,\n  \"enable_occasion_ranking\": true,\n  \"occasion\": \"wedding\",\n  \"mood\": \"elegant\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}{{apiBase}}/search/advanced",
+          "host": ["{{baseUrl}}"],
+          "path": ["{{apiBase}}", "search", "advanced"]
+        }
+      }
+    },
+    {
+      "name": "Cache Stats",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}{{apiBase}}/cache/stats",
+          "host": ["{{baseUrl}}"],
+          "path": ["{{apiBase}}", "cache", "stats"]
+        }
+      }
+    },
+    {
+      "name": "Cache Clear",
+      "request": {
+        "method": "POST",
+        "url": {
+          "raw": "{{baseUrl}}{{apiBase}}/cache/clear",
+          "host": ["{{baseUrl}}"],
+          "path": ["{{apiBase}}", "cache", "clear"]
+        }
+      }
+    },
+    {
+      "name": "Ecommerce Sources",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}{{apiBase}}/ecommerce/sources",
+          "host": ["{{baseUrl}}"],
+          "path": ["{{apiBase}}", "ecommerce", "sources"]
+        }
+      }
+    },
+    {
+      "name": "Ecommerce Fetch",
+      "request": {
+        "method": "POST",
+        "url": {
+          "raw": "{{baseUrl}}{{apiBase}}/ecommerce/fetch?query=dress&max_results_per_source=10",
+          "host": ["{{baseUrl}}"],
+          "path": ["{{apiBase}}", "ecommerce", "fetch"],
+          "query": [
+            {
+              "key": "query",
+              "value": "dress"
+            },
+            {
+              "key": "max_results_per_source",
+              "value": "10"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Ecommerce Search and Embed",
+      "request": {
+        "method": "POST",
+        "url": {
+          "raw": "{{baseUrl}}{{apiBase}}/ecommerce/search-and-embed?query=dress&max_results=10",
+          "host": ["{{baseUrl}}"],
+          "path": ["{{apiBase}}", "ecommerce", "search-and-embed"],
+          "query": [
+            {
+              "key": "query",
+              "value": "dress"
+            },
+            {
+              "key": "max_results",
+              "value": "10"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Ecommerce Status",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}{{apiBase}}/ecommerce/status",
+          "host": ["{{baseUrl}}"],
+          "path": ["{{apiBase}}", "ecommerce", "status"]
+        }
+      }
+    }
+  ]
+}

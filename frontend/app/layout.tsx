@@ -5,8 +5,8 @@ import './globals.css';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Cross-Modal Recommendation System',
-  description: 'AI-powered multimodal e-commerce search with CLIP, FAISS, and hybrid text-image fusion',
+  title: 'Cross-Modal Fashion Recommendation System',
+  description: 'Hybrid AI-powered fashion search using CLIP for text and image fusion with FAISS similarity matching',
 };
 
 export default function RootLayout({

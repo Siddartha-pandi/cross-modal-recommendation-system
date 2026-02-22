@@ -1,5 +1,4 @@
-﻿import EnhancedSearchInterface from './components/EnhancedSearchInterface';
-import './index.css';
+﻿import EnhancedSearchInterface from './EnhancedSearchInterface';
 
 function App() {
   return (
