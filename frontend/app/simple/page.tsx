@@ -34,6 +34,7 @@ export default function HybridSearchPage() {
   const [textQuery, setTextQuery] = useState('');
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [alpha, setAlpha] = useState(0.5);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [response, setResponse] = useState<SearchResponse | null>(null);
@@ -111,7 +112,7 @@ export default function HybridSearchPage() {
       console.log('Payload:', {
         text: textQuery || null,
         image: imageBase64 ? `${imageBase64.substring(0, 50)}...` : null,
-        alpha: 0.5,
+        alpha,
         top_k: 3,
       });
 
@@ -123,7 +124,7 @@ export default function HybridSearchPage() {
         body: JSON.stringify({
           text: textQuery || null,
           image: imageBase64,
-          alpha: 0.5,
+          alpha,
           top_k: 3,
         }),
       });
@@ -265,6 +266,27 @@ export default function HybridSearchPage() {
                   <img src={imagePreview} alt="Preview" className="max-w-xs rounded-lg" />
                 </div>
               )}
+            </div>
+
+            {/* Alpha Control */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-300 mb-3">
+                Alpha (image weight): {alpha.toFixed(2)}
+              </label>
+              <input
+                type="range"
+                min="0"
+                max="1"
+                step="0.05"
+                value={alpha}
+                onChange={(e) => setAlpha(Number(e.target.value))}
+                className="w-full accent-blue-600"
+              />
+              <div className="flex justify-between text-xs text-gray-500 mt-2">
+                <span>Text-only</span>
+                <span>Hybrid</span>
+                <span>Image-only</span>
+              </div>
             </div>
 
             {/* Search Button */}
