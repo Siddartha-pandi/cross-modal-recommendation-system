@@ -186,6 +186,137 @@ class FAISSIndex:
         
         return filtered_results, np.array(filtered_scores)
     
+    def hybrid_search(
+        self,
+        text_embedding: Optional[np.ndarray] = None,
+        image_embedding: Optional[np.ndarray] = None,
+        alpha: float = 0.5,
+        top_k: int = 10,
+        filter_categories: Optional[List[str]] = None,
+        min_score: float = -1.0
+    ) -> Tuple[List[Dict[str, Any]], np.ndarray]:
+        """
+        Hybrid search with dynamic alpha fusion
+        
+        This method properly handles multi-modal search by:
+        1. Computing query embedding: Q = alpha * image + (1-alpha) * text
+        2. Re-scoring ALL products using the SAME alpha to ensure consistency
+        3. Returning top-k results based on re-scored similarities
+        
+        Args:
+            text_embedding: Optional text embedding
+            image_embedding: Optional image embedding  
+            alpha: Weight for image (0=text-only, 1=image-only)
+            top_k: Number of results to return
+            filter_categories: Optional category filter
+            min_score: Minimum similarity score threshold
+            
+        Returns:
+            Tuple of (results, scores)
+        """
+        if len(self.product_metadata) == 0:
+            return [], np.array([])
+        
+        if text_embedding is None and image_embedding is None:
+            raise ValueError("At least one embedding must be provided")
+        
+        # Normalize inputs
+        if text_embedding is not None:
+            if text_embedding.ndim == 1:
+                text_embedding = text_embedding.reshape(1, -1)
+            text_embedding = text_embedding / np.linalg.norm(text_embedding, axis=1, keepdims=True)
+        
+        if image_embedding is not None:
+            if image_embedding.ndim == 1:
+                image_embedding = image_embedding.reshape(1, -1)
+            image_embedding = image_embedding / np.linalg.norm(image_embedding, axis=1, keepdims=True)
+        
+        # Compute query embedding with alpha fusion
+        if text_embedding is not None and image_embedding is not None:
+            query_embedding = alpha * image_embedding + (1 - alpha) * text_embedding
+            query_embedding = query_embedding / np.linalg.norm(query_embedding, axis=1, keepdims=True)
+        elif image_embedding is not None:
+            query_embedding = image_embedding
+        else:
+            query_embedding = text_embedding
+        
+        # Get candidates from FAISS index
+        # Retrieve more candidates to allow for re-scoring
+        search_k = min(len(self.product_metadata), max(top_k * 5, 50))
+        distances, indices = self.index.search(query_embedding.astype(np.float32), search_k)
+        
+        # Re-score products using the same alpha applied to product embeddings
+        rescored_results = []
+        
+        for idx in indices[0]:
+            if idx >= len(self.product_metadata):
+                continue
+            
+            metadata = self.product_metadata[idx]
+            
+            # Check if product has stored embeddings
+            if 'text_embedding' not in metadata or 'image_embedding' not in metadata:
+                # Fallback: use FAISS score if embeddings not available
+                continue
+            
+            # Reconstruct product embedding with query's alpha
+            prod_text_emb = np.array(metadata['text_embedding'])
+            prod_img_emb = np.array(metadata['image_embedding'])
+            
+            # Normalize
+            prod_text_emb = prod_text_emb / np.linalg.norm(prod_text_emb)
+            prod_img_emb = prod_img_emb / np.linalg.norm(prod_img_emb)
+            
+            # Apply same alpha as query
+            if text_embedding is not None and image_embedding is not None:
+                product_embedding = alpha * prod_img_emb + (1 - alpha) * prod_text_emb
+            elif image_embedding is not None:
+                product_embedding = prod_img_emb
+            else:
+                product_embedding = prod_text_emb
+            
+            product_embedding = product_embedding / np.linalg.norm(product_embedding)
+            
+            # Compute cosine similarity
+            score = float(np.dot(query_embedding.flatten(), product_embedding))
+            
+            # Apply filters
+            if score < min_score:
+                continue
+            
+            if filter_categories and metadata.get('category') not in filter_categories:
+                continue
+            
+            # Prepare result
+            result = {}
+            for k, v in metadata.items():
+                # Skip embeddings from result (they're large)
+                if k in ['text_embedding', 'image_embedding']:
+                    continue
+                if isinstance(v, np.ndarray):
+                    result[k] = v.tolist()
+                elif isinstance(v, (np.float32, np.float64)):
+                    result[k] = float(v)
+                elif isinstance(v, (np.int32, np.int64)):
+                    result[k] = int(v)
+                else:
+                    result[k] = v
+            result['similarity_score'] = score
+            
+            rescored_results.append((result, score))
+        
+        # Sort by score (descending) and take top_k
+        rescored_results.sort(key=lambda x: x[1], reverse=True)
+        rescored_results = rescored_results[:top_k]
+        
+        if not rescored_results:
+            return [], np.array([])
+        
+        results = [r[0] for r in rescored_results]
+        scores = np.array([r[1] for r in rescored_results])
+        
+        return results, scores
+    
     def search_with_reranking(
         self,
         query_embedding: np.ndarray,
