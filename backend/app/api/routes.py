@@ -108,44 +108,37 @@ async def hybrid_search(request: SearchRequest, app_request: Request):
         fusion_info = {}
         
         if fusion_engine and text_embedding is not None and image_embedding is not None:
-            # Use FusionEngine for hybrid search with explainability
-            query_embedding, match_scores = fusion_engine.fuse(
+            # Use FusionEngine for explainability
+            _, match_scores = fusion_engine.fuse(
                 image_embedding=image_embedding,
                 text_embedding=text_embedding,
                 alpha=request.alpha,
                 method="weighted_avg"
             )
             fusion_info = {
-                "method": "FusionEngine",
+                "method": "Dynamic Alpha Fusion",
                 "match_scores": match_scores,
                 "embedding_space": "CLIP joint space",
-                "formula": f"V_fusion = {request.alpha:.2f} * V_image + {1-request.alpha:.2f} * V_text"
+                "formula": f"V_fusion = {request.alpha:.2f} * V_image + {1-request.alpha:.2f} * V_text",
+                "note": "Products re-scored with same alpha for consistency"
             }
         elif text_embedding is not None and image_embedding is not None:
-            # Fallback: Manual fusion without engine
-            query_embedding = (
-                request.alpha * image_embedding + 
-                (1 - request.alpha) * text_embedding
-            )
-            # Normalize the fused embedding
-            query_embedding = query_embedding / np.linalg.norm(query_embedding)
             fusion_info = {
-                "method": "Manual weighted average",
-                "formula": f"V_fusion = {request.alpha:.2f} * V_image + {1-request.alpha:.2f} * V_text"
+                "method": "Dynamic Alpha Fusion",
+                "formula": f"V_fusion = {request.alpha:.2f} * V_image + {1-request.alpha:.2f} * V_text",
+                "note": "Products re-scored with same alpha for consistency"
             }
         elif image_embedding is not None:
-            # Image-only search
-            query_embedding = image_embedding
             fusion_info = {"method": "Image-only", "alpha": 1.0}
         else:
-            # Text-only search
-            query_embedding = text_embedding
             fusion_info = {"method": "Text-only", "alpha": 0.0}
         
-        # Step 3: FAISS similarity search
+        # Step 3: FAISS hybrid search with dynamic alpha
         top_k = min(request.top_k, 3)
-        results, scores = faiss_index.search(
-            query_embedding=query_embedding,
+        results, scores = faiss_index.hybrid_search(
+            text_embedding=text_embedding,
+            image_embedding=image_embedding,
+            alpha=request.alpha,
             top_k=top_k
         )
         

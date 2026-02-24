@@ -168,12 +168,11 @@ async def generate_embeddings(products: list):
                 text_emb = await clip_model.encode_text(text)
                 image_emb = await clip_model.encode_image(image)
                 
-                # Use hybrid embedding (0.5 text + 0.5 image) for indexing
-                # This gives good baseline that works for all search types
-                combined_emb = 0.5 * text_emb + 0.5 * image_emb
-                combined_emb = combined_emb / np.linalg.norm(combined_emb)
+                # IMPORTANT: Store pure image embeddings for indexing
+                # This allows proper cross-modal matching via CLIP's joint embedding space
+                # Text queries will naturally match visually similar products through CLIP
                 
-                batch_embeddings.append(combined_emb)
+                batch_embeddings.append(image_emb)
                 batch_metadata.append({
                     'product_id': product['id'],
                     'title': product['title'],
@@ -188,7 +187,10 @@ async def generate_embeddings(products: list):
                     'material': product.get('material', ''),
                     'rating': product.get('rating', 0.0),
                     'tc_reference': product.get('tc_reference', ''),
-                    'tags': product.get('tags', [])
+                    'tags': product.get('tags', []),
+                    # Store both embeddings in metadata for future hybrid search
+                    'text_embedding': text_emb.tolist(),
+                    'image_embedding': image_emb.tolist()
                 })
                 
             except Exception as e:
