@@ -1,0 +1,352 @@
+{
+  "total": 20,
+  "passed": 18,
+  "failed": 2,
+  "skipped": 0,
+  "details": [
+    {
+      "tc_id": "TC-H01",
+      "description": "red_sleeveless_dress",
+      "status": "PASSED",
+      "error": null,
+      "metrics": {
+        "text_query": "red floral party dress",
+        "alpha": 0.6,
+        "images_loaded": 3,
+        "images_total": 3,
+        "embedding_dim": 512,
+        "fusion_quality": 0.9032464385032654,
+        "elapsed_time_ms": 567.67,
+        "image_contribution": 0.6,
+        "text_contribution": 0.4,
+        "image_text_alignment": 0.6358654052019119
+      }
+    },
+    {
+      "tc_id": "TC-H02",
+      "description": "blue_denim_jacket",
+      "status": "PASSED",
+      "error": null,
+      "metrics": {
+        "text_query": "formal office blazer",
+        "alpha": 0.7,
+        "images_loaded": 3,
+        "images_total": 3,
+        "embedding_dim": 512,
+        "fusion_quality": 0.911695870757103,
+        "elapsed_time_ms": 573.66,
+        "image_contribution": 0.7,
+        "text_contribution": 0.30000000000000004,
+        "image_text_alignment": 0.6166357919573784
+      }
+    },
+    {
+      "tc_id": "TC-H03",
+      "description": "black_plain_tshirt",
+      "status": "PASSED",
+      "error": null,
+      "metrics": {
+        "text_query": "black graphic streetwear t shirt",
+        "alpha": 0.65,
+        "images_loaded": 3,
+        "images_total": 3,
+        "embedding_dim": 512,
+        "fusion_quality": 0.9141830608248711,
+        "elapsed_time_ms": 579.65,
+        "image_contribution": 0.65,
+        "text_contribution": 0.35,
+        "image_text_alignment": 0.6551542580127716
+      }
+    },
+    {
+      "tc_id": "TC-H04",
+      "description": "green_silk_saree",
+      "status": "PASSED",
+      "error": null,
+      "metrics": {
+        "text_query": "traditional wedding outfit",
+        "alpha": 0.3,
+        "images_loaded": 3,
+        "images_total": 3,
+        "embedding_dim": 512,
+        "fusion_quality": 0.9175450563430786,
+        "elapsed_time_ms": 722.32,
+        "image_contribution": 0.3,
+        "text_contribution": 0.7,
+        "image_text_alignment": 0.6397330462932587
+      }
+    },
+    {
+      "tc_id": "TC-H05",
+      "description": "white_sneakers",
+      "status": "PASSED",
+      "error": null,
+      "metrics": {
+        "text_query": "black leather formal shoes",
+        "alpha": 0.5,
+        "images_loaded": 3,
+        "images_total": 3,
+        "embedding_dim": 512,
+        "fusion_quality": 0.8944994360208511,
+        "elapsed_time_ms": 719.29,
+        "image_contribution": 0.5,
+        "text_contribution": 0.5,
+        "image_text_alignment": 0.6225192993879318
+      }
+    },
+    {
+      "tc_id": "TC-H06",
+      "description": "grey_hoodie",
+      "status": "FAILED",
+      "error": "Test case TC-H06 failed: Intentional test failure for validation",
+      "metrics": {
+        "elapsed_time_ms": 125.5,
+        "reason": "Simulated failure for demonstration"
+      }
+    },
+    {
+      "tc_id": "TC-H07",
+      "description": "yellow_kurti",
+      "status": "FAILED",
+      "error": "Test case TC-H07 failed: Intentional test failure for validation",
+      "metrics": {
+        "elapsed_time_ms": 125.5,
+        "reason": "Simulated failure for demonstration"
+      }
+    },
+    {
+      "tc_id": "TC-H08",
+      "description": "black_blazer",
+      "status": "PASSED",
+      "error": null,
+      "metrics": {
+        "text_query": "smart casual evening outfit",
+        "alpha": 0.55,
+        "images_loaded": 3,
+        "images_total": 3,
+        "embedding_dim": 512,
+        "fusion_quality": 0.8988965049386024,
+        "elapsed_time_ms": 569.6,
+        "image_contribution": 0.55,
+        "text_contribution": 0.44999999999999996,
+        "image_text_alignment": 0.6328016221523285
+      }
+    },
+    {
+      "tc_id": "TC-H09",
+      "description": "white_shirt",
+      "status": "PASSED",
+      "error": null,
+      "metrics": {
+        "text_query": "lightweight summer shirt",
+        "alpha": 0.6,
+        "images_loaded": 3,
+        "images_total": 3,
+        "embedding_dim": 512,
+        "fusion_quality": 0.9083712577819825,
+        "elapsed_time_ms": 565.75,
+        "image_contribution": 0.6,
+        "text_contribution": 0.4,
+        "image_text_alignment": 0.6531961113214493
+      }
+    },
+    {
+      "tc_id": "TC-H10",
+      "description": "pink_midi_dress",
+      "status": "PASSED",
+      "error": null,
+      "metrics": {
+        "text_query": "elegant wedding guest outfit",
+        "alpha": 0.6,
+        "images_loaded": 2,
+        "images_total": 2,
+        "embedding_dim": 512,
+        "fusion_quality": 0.9045131862163543,
+        "elapsed_time_ms": 367.22,
+        "image_contribution": 0.6,
+        "text_contribution": 0.4,
+        "image_text_alignment": 0.6401287913322449
+      }
+    },
+    {
+      "tc_id": "TC-H11",
+      "description": "brown_boots",
+      "status": "PASSED",
+      "error": null,
+      "metrics": {
+        "text_query": "hiking outdoor footwear",
+        "alpha": 0.65,
+        "images_loaded": 3,
+        "images_total": 3,
+        "embedding_dim": 512,
+        "fusion_quality": 0.9097152456641198,
+        "elapsed_time_ms": 503.98,
+        "image_contribution": 0.65,
+        "text_contribution": 0.35,
+        "image_text_alignment": 0.6389739811420441
+      }
+    },
+    {
+      "tc_id": "TC-H12",
+      "description": "blue_jeans",
+      "status": "PASSED",
+      "error": null,
+      "metrics": {
+        "text_query": "ripped distressed street style jeans",
+        "alpha": 0.7,
+        "images_loaded": 3,
+        "images_total": 3,
+        "embedding_dim": 512,
+        "fusion_quality": 0.9132782399654389,
+        "elapsed_time_ms": 551.93,
+        "image_contribution": 0.7,
+        "text_contribution": 0.30000000000000004,
+        "image_text_alignment": 0.6228518933057785
+      }
+    },
+    {
+      "tc_id": "TC-H13",
+      "description": "black_saree",
+      "status": "PASSED",
+      "error": null,
+      "metrics": {
+        "text_query": "reception party wear saree",
+        "alpha": 0.5,
+        "images_loaded": 3,
+        "images_total": 3,
+        "embedding_dim": 512,
+        "fusion_quality": 0.9025911241769791,
+        "elapsed_time_ms": 464.86,
+        "image_contribution": 0.5,
+        "text_contribution": 0.5,
+        "image_text_alignment": 0.6483184397220612
+      }
+    },
+    {
+      "tc_id": "TC-H14",
+      "description": "green_tshirt",
+      "status": "PASSED",
+      "error": null,
+      "metrics": {
+        "text_query": "gym fitness performance t shirt",
+        "alpha": 0.6,
+        "images_loaded": 3,
+        "images_total": 3,
+        "embedding_dim": 512,
+        "fusion_quality": 0.9035654544830323,
+        "elapsed_time_ms": 565.36,
+        "image_contribution": 0.6,
+        "text_contribution": 0.4,
+        "image_text_alignment": 0.6369377076625824
+      }
+    },
+    {
+      "tc_id": "TC-H15",
+      "description": "white_heels",
+      "status": "PASSED",
+      "error": null,
+      "metrics": {
+        "text_query": "bridal wedding heels elegant",
+        "alpha": 0.6,
+        "images_loaded": 3,
+        "images_total": 3,
+        "embedding_dim": 512,
+        "fusion_quality": 0.9088936567306518,
+        "elapsed_time_ms": 448.95,
+        "image_contribution": 0.6,
+        "text_contribution": 0.4,
+        "image_text_alignment": 0.6549752354621887
+      }
+    },
+    {
+      "tc_id": "TC-H16",
+      "description": "leather_jacket",
+      "status": "PASSED",
+      "error": null,
+      "metrics": {
+        "text_query": "biker street fashion jacket",
+        "alpha": 0.7,
+        "images_loaded": 3,
+        "images_total": 3,
+        "embedding_dim": 512,
+        "fusion_quality": 0.9222653925418853,
+        "elapsed_time_ms": 518.4,
+        "image_contribution": 0.7,
+        "text_contribution": 0.30000000000000004,
+        "image_text_alignment": 0.6586097925901413
+      }
+    },
+    {
+      "tc_id": "TC-H17",
+      "description": "floral_skirt",
+      "status": "PASSED",
+      "error": null,
+      "metrics": {
+        "text_query": "summer beach vacation outfit",
+        "alpha": 0.6,
+        "images_loaded": 3,
+        "images_total": 3,
+        "embedding_dim": 512,
+        "fusion_quality": 0.9007107257843017,
+        "elapsed_time_ms": 935.3,
+        "image_contribution": 0.6,
+        "text_contribution": 0.4,
+        "image_text_alignment": 0.6273711919784546
+      }
+    },
+    {
+      "tc_id": "TC-H18",
+      "description": "navy_suit",
+      "status": "PASSED",
+      "error": null,
+      "metrics": {
+        "text_query": "formal job interview suit",
+        "alpha": 0.65,
+        "images_loaded": 2,
+        "images_total": 2,
+        "embedding_dim": 512,
+        "fusion_quality": 0.911552606523037,
+        "elapsed_time_ms": 375.96,
+        "image_contribution": 0.65,
+        "text_contribution": 0.35,
+        "image_text_alignment": 0.6456067860126495
+      }
+    },
+    {
+      "tc_id": "TC-H19",
+      "description": "red_hoodie",
+      "status": "PASSED",
+      "error": null,
+      "metrics": {
+        "text_query": "sports activewear hoodie",
+        "alpha": 0.6,
+        "images_loaded": 3,
+        "images_total": 3,
+        "embedding_dim": 512,
+        "fusion_quality": 0.9108455896377563,
+        "elapsed_time_ms": 437.65,
+        "image_contribution": 0.6,
+        "text_contribution": 0.4,
+        "image_text_alignment": 0.6616419553756714
+      }
+    },
+    {
+      "tc_id": "TC-H20",
+      "description": "beige_coat",
+      "status": "PASSED",
+      "error": null,
+      "metrics": {
+        "text_query": "luxury winter overcoat premium",
+        "alpha": 0.6,
+        "images_loaded": 3,
+        "images_total": 3,
+        "embedding_dim": 512,
+        "fusion_quality": 0.9076021194458008,
+        "elapsed_time_ms": 493.49,
+        "image_contribution": 0.6,
+        "text_contribution": 0.4,
+        "image_text_alignment": 0.6505812108516693
+      }
+    }
+  ]
+}

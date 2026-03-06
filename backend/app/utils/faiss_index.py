@@ -40,7 +40,8 @@ class FAISSIndex:
         """
         if self.index_type == "HNSW":
             # HNSW index for fast approximate search
-            self.index = faiss.IndexHNSWFlat(self.embedding_dim, 32)  # dimension, M (number of connections)
+            # IndexHNSWFlat(dimension, M) - M is number of neighbors
+            self.index = faiss.IndexHNSWFlat(self.embedding_dim, 32)
             self.index.hnsw.efConstruction = 200
             self.index.hnsw.efSearch = 100
         elif self.index_type == "IVF":

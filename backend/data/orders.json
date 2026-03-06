@@ -59,5 +59,47 @@
       "status": "pending",
       "created_at": "2026-02-23T04:25:00.805118"
     }
+  ],
+  "103ac6db-a8c2-4b15-a73c-b3686ac0ed48": [
+    {
+      "order_id": "685cd2ec",
+      "user_id": "103ac6db-a8c2-4b15-a73c-b3686ac0ed48",
+      "items": [
+        {
+          "product_id": "2",
+          "title": "Red Floral Print Party Dress",
+          "price": 3299.0,
+          "quantity": 2,
+          "image_url": "/images/product_2.jpg"
+        }
+      ],
+      "total_price": 6598.0,
+      "shipping_address": "Do 26-46-20",
+      "shipping_city": "Vishakhapatnam",
+      "shipping_zip": "530026",
+      "status": "pending",
+      "created_at": "2026-02-24T17:11:29.995758"
+    }
+  ],
+  "1f9eaebd-a8e2-4c96-84f6-8c567894e7b2": [
+    {
+      "order_id": "54abffb2",
+      "user_id": "1f9eaebd-a8e2-4c96-84f6-8c567894e7b2",
+      "items": [
+        {
+          "product_id": "2",
+          "title": "Red Floral Print Party Dress",
+          "price": 3299.0,
+          "quantity": 1,
+          "image_url": "/images/product_2.jpg"
+        }
+      ],
+      "total_price": 3299.0,
+      "shipping_address": "Do 26-46-20",
+      "shipping_city": "Vishakhapatnam",
+      "shipping_zip": "530026",
+      "status": "pending",
+      "created_at": "2026-02-24T17:29:52.992389"
+    }
   ]
 }

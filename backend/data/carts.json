@@ -4,5 +4,22 @@
   },
   "0da460f8-8b68-4182-85a3-45290835b7db": {
     "items": []
+  },
+  "103ac6db-a8c2-4b15-a73c-b3686ac0ed48": {
+    "items": []
+  },
+  "1f9eaebd-a8e2-4c96-84f6-8c567894e7b2": {
+    "items": []
+  },
+  "fc480d9e-5810-43a4-b7c8-01d42651fe93": {
+    "items": [
+      {
+        "product_id": "2",
+        "title": "Red Floral Print Party Dress",
+        "price": 3299.0,
+        "quantity": 1,
+        "image_url": "/images/product_2.jpg"
+      }
+    ]
   }
 }

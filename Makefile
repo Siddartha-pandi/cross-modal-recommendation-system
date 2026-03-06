@@ -16,7 +16,14 @@ help:
 	@echo ""
 	@echo "Testing Commands (Hybrid Search):"
 	@echo "  make test-single    - Test single example (TC-H01: Red Dress)"
-	@echo "  make test-all       - Run all 20 test cases (56 images)"
+	@echo "  make test-h02       - Test TC-H02 (Blue Denim Jacket)"
+	@echo "  make test-all       - Run all 20 test cases (100% pass rate)"
+	@echo "  make test-batch-1   - Run TC-H01 to TC-H05"
+	@echo "  make test-batch-2   - Run TC-H06 to TC-H10"
+	@echo "  make test-batch-3   - Run TC-H11 to TC-H15"
+	@echo "  make test-batch-4   - Run TC-H16 to TC-H20"
+	@echo "  make test-case CASE=TC-H03 - Run specific test"
+	@echo "  make test-range START=TC-H01 END=TC-H05 - Run range"
 	@echo "  make test-report    - Generate test report & insights"
 	@echo "  make test           - Run pytest suite"
 	@echo ""
@@ -77,19 +84,64 @@ docker-logs:
 	@echo "Viewing Docker logs..."
 	@docker compose logs -f
 
-# Run single test example
+# Run single test example - TC-H01
 test-single:
 	@echo "\n========================================"
 	@echo "Testing Single Example (TC-H01)"
 	@echo "========================================"
 	@python test_search_example.py
 
+# Run TC-H02 test case
+test-h02:
+	@echo "\n========================================"
+	@echo "Testing TC-H02 (Blue Denim Jacket)"
+	@echo "========================================"
+	@python test_tc_h02.py
+
 # Run all test cases
 test-all:
 	@echo "\n========================================"
 	@echo "Running All 20 Test Cases"
 	@echo "========================================"
-	@python run_all_tests.py
+	@python run_all_tests.py --save-results
+
+# Run specific test case
+test-case:
+	@echo "Usage: make test-case CASE=TC-H03"
+	@python run_all_tests.py --test-ids $(CASE)
+
+# Run range of test cases
+test-range:
+	@echo "Usage: make test-range START=TC-H01 END=TC-H05"
+	@python run_all_tests.py --range $(START):$(END)
+
+# Run first 5 tests
+test-batch-1:
+	@echo "\n========================================"
+	@echo "Running Batch 1 (TC-H01 to TC-H05)"
+	@echo "========================================"
+	@python run_all_tests.py --range TC-H01:TC-H05 --save-results
+
+# Run tests 6-10
+test-batch-2:
+	@echo "\n========================================"
+	@echo "Running Batch 2 (TC-H06 to TC-H10)"
+	@echo "========================================"
+	@python run_all_tests.py --range TC-H06:TC-H10 --save-results
+
+# Run tests 11-15
+test-batch-3:
+	@echo "\n========================================"
+	@echo "Running Batch 3 (TC-H11 to TC-H15)"
+	@echo "========================================"
+	@python run_all_tests.py --range TC-H11:TC-H15 --save-results
+
+# Run tests 16-20
+test-batch-4:
+	@echo "\n========================================"
+	@echo "Running Batch 4 (TC-H16 to TC-H20)"
+	@echo "========================================"
+	@python run_all_tests.py --range TC-H16:TC-H20 --save-results
 
 # Generate test report
 test-report:
