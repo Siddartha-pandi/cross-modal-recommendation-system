@@ -381,15 +381,36 @@ async def hybrid_search(request: SearchRequest, app_request: Request):
 
 @router.get("/health")
 async def health_check(request: Request):
-    """Health check endpoint"""
+    """Health check endpoint with search provider status"""
+    from app.config.settings import settings
+    
     clip_model = getattr(request.app.state, 'clip_model', None)
     faiss_index = getattr(request.app.state, 'faiss_index', None)
+    
+    # Check search provider configuration
+    search_provider = settings.SEARCH_PROVIDER.lower()
+    search_status = {"provider": search_provider}
+    
+    if search_provider in ["serpapi", "serapi"]:
+        search_status["serpapi_configured"] = bool(settings.SERP_API_KEY and settings.SERP_API_KEY.strip())
+        search_status["google_fallback_configured"] = bool(
+            settings.GOOGLE_API_KEY and settings.GOOGLE_API_KEY.strip() and 
+            settings.GOOGLE_CX and settings.GOOGLE_CX.strip()
+        )
+    elif search_provider == "google":
+        search_status["google_configured"] = bool(
+            settings.GOOGLE_API_KEY and settings.GOOGLE_API_KEY.strip() and 
+            settings.GOOGLE_CX and settings.GOOGLE_CX.strip()
+        )
+    elif search_provider == "duckduckgo":
+        search_status["requires_api_key"] = False
     
     return JSONResponse({
         "status": "healthy",
         "clip_model_loaded": clip_model is not None,
         "faiss_index_loaded": faiss_index is not None,
-        "total_products": faiss_index.get_total_products() if faiss_index else 0
+        "total_products": faiss_index.get_total_products() if faiss_index else 0,
+        "search": search_status
     })
 
 @router.get("/stats")

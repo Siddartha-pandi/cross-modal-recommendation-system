@@ -26,7 +26,7 @@ export default function RegisterPage() {
   const [toastMessage, setToastMessage] = useState('');
   const [toastVariant, setToastVariant] = useState<'error' | 'success'>('error');
   const toastTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  
+
   const { register } = useAuth();
   const router = useRouter();
 
@@ -149,7 +149,7 @@ export default function RegisterPage() {
       showToast('Account created successfully', 'success');
       setSuccessMessage('✓ Account created successfully! Redirecting...');
       setTimeout(() => {
-        router.push('/simple');
+        router.push('/recommend');
       }, 1500);
     } catch (err: any) {
       setErrors({});
@@ -160,7 +160,7 @@ export default function RegisterPage() {
     }
   };
 
-  const isFormValid = 
+  const isFormValid =
     fullName.trim().length >= 2 &&
     email &&
     password.length >= 8 &&
@@ -175,9 +175,8 @@ export default function RegisterPage() {
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-neutral-900 flex items-center justify-center px-4 py-12">
       {toastMessage && (
         <div
-          className={`fixed bottom-6 right-6 z-50 px-4 py-3 rounded-lg shadow-lg text-sm text-white ${
-            toastVariant === 'success' ? 'bg-green-500/90' : 'bg-red-500/90'
-          }`}
+          className={`fixed bottom-6 right-6 z-50 px-4 py-3 rounded-lg shadow-lg text-sm text-white ${toastVariant === 'success' ? 'bg-green-500/90' : 'bg-red-500/90'
+            }`}
         >
           {toastMessage}
         </div>
@@ -225,13 +224,12 @@ export default function RegisterPage() {
                     setFullName(e.target.value);
                     validateField('fullName', e.target.value);
                   }}
-                  className={`w-full pl-10 pr-4 py-3 bg-slate-900 border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-transparent transition ${
-                    errors.fullName
-                      ? 'border-red-500 focus:ring-red-500'
-                      : fullName && !errors.fullName
+                  className={`w-full pl-10 pr-4 py-3 bg-slate-900 border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-transparent transition ${errors.fullName
+                    ? 'border-red-500 focus:ring-red-500'
+                    : fullName && !errors.fullName
                       ? 'border-green-500 focus:ring-green-500'
                       : 'border-slate-600 focus:ring-blue-500'
-                  }`}
+                    }`}
                   placeholder="John Doe"
                 />
               </div>
@@ -265,13 +263,12 @@ export default function RegisterPage() {
                     setEmail(e.target.value);
                     validateField('email', e.target.value);
                   }}
-                  className={`w-full pl-10 pr-4 py-3 bg-slate-900 border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-transparent transition ${
-                    errors.email
-                      ? 'border-red-500 focus:ring-red-500'
-                      : email && !errors.email
+                  className={`w-full pl-10 pr-4 py-3 bg-slate-900 border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-transparent transition ${errors.email
+                    ? 'border-red-500 focus:ring-red-500'
+                    : email && !errors.email
                       ? 'border-green-500 focus:ring-green-500'
                       : 'border-slate-600 focus:ring-blue-500'
-                  }`}
+                    }`}
                   placeholder="you@example.com"
                 />
               </div>
@@ -305,13 +302,12 @@ export default function RegisterPage() {
                     setPassword(e.target.value);
                     validateField('password', e.target.value);
                   }}
-                  className={`w-full pl-10 pr-10 py-3 bg-slate-900 border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-transparent transition ${
-                    errors.password
-                      ? 'border-red-500 focus:ring-red-500'
-                      : password && !errors.password
+                  className={`w-full pl-10 pr-10 py-3 bg-slate-900 border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-transparent transition ${errors.password
+                    ? 'border-red-500 focus:ring-red-500'
+                    : password && !errors.password
                       ? 'border-green-500 focus:ring-green-500'
                       : 'border-slate-600 focus:ring-blue-500'
-                  }`}
+                    }`}
                   placeholder="••••••••"
                 />
                 <button
@@ -330,19 +326,17 @@ export default function RegisterPage() {
                     {[...Array(6)].map((_, i) => (
                       <div
                         key={i}
-                        className={`h-1 flex-1 rounded-full transition ${
-                          i < strength ? strengthLabel.color : 'bg-slate-700'
-                        }`}
+                        className={`h-1 flex-1 rounded-full transition ${i < strength ? strengthLabel.color : 'bg-slate-700'
+                          }`}
                       />
                     ))}
                   </div>
-                  <p className={`text-xs font-medium ${
-                    strengthLabel.color === 'bg-red-500'
-                      ? 'text-red-400'
-                      : strengthLabel.color === 'bg-yellow-500'
+                  <p className={`text-xs font-medium ${strengthLabel.color === 'bg-red-500'
+                    ? 'text-red-400'
+                    : strengthLabel.color === 'bg-yellow-500'
                       ? 'text-yellow-400'
                       : 'text-green-400'
-                  }`}>
+                    }`}>
                     Strength: {strengthLabel.label}
                   </p>
                 </div>
@@ -378,13 +372,12 @@ export default function RegisterPage() {
                     setConfirmPassword(e.target.value);
                     validateField('confirmPassword', e.target.value);
                   }}
-                  className={`w-full pl-10 pr-10 py-3 bg-slate-900 border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-transparent transition ${
-                    errors.confirmPassword
-                      ? 'border-red-500 focus:ring-red-500'
-                      : confirmPassword && password === confirmPassword
+                  className={`w-full pl-10 pr-10 py-3 bg-slate-900 border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-transparent transition ${errors.confirmPassword
+                    ? 'border-red-500 focus:ring-red-500'
+                    : confirmPassword && password === confirmPassword
                       ? 'border-green-500 focus:ring-green-500'
                       : 'border-slate-600 focus:ring-blue-500'
-                  }`}
+                    }`}
                   placeholder="••••••••"
                 />
                 <button
@@ -449,30 +442,7 @@ export default function RegisterPage() {
           </Link>
         </div>
 
-        {/* Security Info */}
-        <div className="bg-slate-800/50 border border-slate-700 rounded-lg p-4 space-y-3">
-          <div>
-            <p className="text-xs text-gray-400 font-semibold mb-2">
-              🔒 Security
-            </p>
-            <p className="text-xs text-gray-500">
-              Your password is securely hashed and never stored in plain text.
-            </p>
-          </div>
-          {/* Troubleshooting */}
-          <div className="pt-2 border-t border-slate-700">
-            <p className="text-xs text-gray-400 font-semibold mb-2">
-              💡 If Registration Fails
-            </p>
-            <ul className="text-xs text-gray-500 space-y-1">
-              <li>• Check backend is running: http://localhost:8000/docs</li>
-              <li>• Verify email format is valid (user@gmail.com)</li>
-              <li>• Use different email if it already exists</li>
-              <li>• Password must be 8+ chars, uppercase, lowercase, number</li>
-              <li>• Full name must be at least 2 characters</li>
-            </ul>
-          </div>
-        </div>
+
       </div>
     </div>
   );

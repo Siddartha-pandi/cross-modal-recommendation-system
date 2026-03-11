@@ -211,7 +211,7 @@ export default function OrderDetailsPage({ params }: { params: { order_id: strin
             </div>
             <div>
               <p className="text-gray-400 text-sm mb-2">Total Amount</p>
-              <p className="text-2xl font-bold text-blue-400">${order.total_price.toFixed(2)}</p>
+              <p className="text-2xl font-bold text-blue-400">₹{order.total_price.toLocaleString('en-IN')}</p>
             </div>
           </div>
 
@@ -247,10 +247,10 @@ export default function OrderDetailsPage({ params }: { params: { order_id: strin
                 </div>
                 <div className="text-right">
                   <p className="text-blue-400 font-semibold">
-                    ${item.price.toFixed(2)}
+                    ₹{item.price.toLocaleString('en-IN')}
                   </p>
                   <p className="text-gray-400 text-sm">
-                    Subtotal: ${(item.price * item.quantity).toFixed(2)}
+                    Subtotal: ₹{(item.price * item.quantity).toLocaleString('en-IN')}
                   </p>
                 </div>
               </div>

@@ -212,6 +212,12 @@ export default function HybridSearchPage() {
             Fashion Finder
           </Link>
           <div className="flex items-center gap-4">
+            {/* <Link
+              href="/recommend"
+              className="text-sm font-semibold text-violet-400 border border-violet-500/40 px-3 py-1 rounded-full bg-violet-500/10 hover:bg-violet-500/20 transition"
+            >
+              ✨ Live Recommend
+            </Link> */}
             <Link
               href="/cart"
               className="relative text-white hover:text-blue-400 transition flex items-center gap-2"
@@ -455,7 +461,7 @@ export default function HybridSearchPage() {
                       <p className="text-gray-400 text-sm mb-3 flex-1">{product.description}</p>
                       <div className="flex justify-between items-center mb-4">
                         <span className="text-blue-400 font-semibold">
-                          ${product.price}
+                          ₹{product.price.toLocaleString('en-IN')}
                         </span>
                         <div className="flex flex-col items-end">
                           <span className="text-xs text-gray-500 mb-1">Match Score</span>

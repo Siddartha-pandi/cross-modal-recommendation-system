@@ -171,7 +171,7 @@ export default function OrdersPage() {
                     <div>
                       <p className="text-gray-400 text-sm mb-1">Total</p>
                       <p className="text-blue-400 font-semibold">
-                        ${order.total_price.toFixed(2)}
+                        ₹{order.total_price.toLocaleString('en-IN')}
                       </p>
                     </div>
                     <div>

@@ -1,0 +1,91 @@
+{
+  "categories": {
+    "shirt": {
+      "subcategories": [
+        "formal shirt",
+        "casual shirt",
+        "printed shirt",
+        "checked shirt",
+        "denim shirt",
+        "linen shirt",
+        "oversized shirt",
+        "crop shirt",
+        "blouse shirt"
+      ],
+      "attributes": {
+        "sleeve_type": ["full sleeve", "half sleeve", "sleeveless"],
+        "collar_type": ["spread", "mandarin", "button-down"],
+        "pattern": ["plain", "striped", "checked", "printed"],
+        "material": ["cotton", "linen", "denim", "polyester"]
+      }
+    },
+    "shoes": {
+      "subcategories": [
+        "sneakers",
+        "running shoes",
+        "formal shoes",
+        "loafers",
+        "boots",
+        "sandals",
+        "high heels",
+        "flats",
+        "slippers"
+      ],
+      "attributes": {
+        "material": ["leather", "mesh", "synthetic"],
+        "sole_type": ["rubber", "eva", "foam"],
+        "closure": ["lace-up", "slip-on", "velcro"],
+        "use": ["casual", "sports", "formal"]
+      }
+    },
+    "dress": {
+      "subcategories": [
+        "casual frock",
+        "party wear dress",
+        "maxi dress",
+        "mini dress",
+        "midi dress",
+        "a-line dress",
+        "bodycon dress",
+        "floral dress",
+        "summer dress"
+      ],
+      "attributes": {
+        "length": ["mini", "midi", "maxi"],
+        "neckline": ["round", "v-neck", "square"],
+        "sleeve_type": ["sleeveless", "half", "full"],
+        "pattern": ["floral", "solid", "printed"]
+      }
+    }
+  },
+  "patterns": [
+    "solid",
+    "striped",
+    "checked",
+    "floral",
+    "polka dot",
+    "geometric",
+    "abstract",
+    "animal print"
+  ],
+  "seasonal_recommendations": {
+    "summer": [
+      "cotton shirts",
+      "floral frocks",
+      "linen shirts",
+      "sandals",
+      "sneakers"
+    ],
+    "winter": [
+      "jackets",
+      "hoodies",
+      "boots",
+      "full sleeve shirts"
+    ],
+    "spring": [
+      "floral dresses",
+      "pastel shirts",
+      "light jackets"
+    ]
+  }
+}

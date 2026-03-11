@@ -15,7 +15,7 @@ export default function Home() {
 
   const handleStartShopping = () => {
     if (isAuthenticated) {
-      router.push('/simple');
+      router.push('/recommend');
     } else {
       router.push('/login');
     }
@@ -24,7 +24,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gray-900 text-white">
       {/* Hero Section with Dark Gradient Background */}
-      <div 
+      <div
         className="min-h-screen relative flex flex-col items-center justify-center bg-gradient-to-br from-slate-950 via-slate-900 to-neutral-900"
       >
         {/* Navigation */}
@@ -37,7 +37,7 @@ export default function Home() {
               {isAuthenticated ? (
                 <>
                   <span className="text-gray-300">Welcome, {user?.full_name}!</span>
-                  <button 
+                  <button
                     onClick={handleLogout}
                     className="px-6 py-2 text-white hover:text-gray-300 transition font-medium"
                   >
@@ -46,13 +46,13 @@ export default function Home() {
                 </>
               ) : (
                 <>
-                  <Link 
+                  <Link
                     href="/login"
                     className="px-6 py-2 text-white hover:text-gray-300 transition font-medium"
                   >
                     Login
                   </Link>
-                  <Link 
+                  <Link
                     href="/register"
                     className="px-6 py-2 border-2 border-white rounded-lg hover:bg-white hover:text-slate-950 transition font-medium"
                   >
@@ -71,18 +71,26 @@ export default function Home() {
             <br />
             Fashion Recommendation System
           </h1>
-          
+
           <p className="text-lg md:text-xl text-gray-300 mb-12">
             Search with text, images, or both using AI-powered similarity matching
           </p>
 
-          {/* CTA Button */}
-          <button
-            onClick={handleStartShopping}
-            className="inline-block px-10 py-4 bg-blue-600 rounded-lg font-bold text-lg hover:bg-blue-700 transition cursor-pointer"
-          >
-            {isAuthenticated ? 'Start Shopping Now →' : 'Login to Start Shopping →'}
-          </button>
+          {/* CTA Buttons */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <button
+              onClick={handleStartShopping}
+              className="inline-block px-10 py-4 bg-blue-600 rounded-lg font-bold text-lg hover:bg-blue-700 transition cursor-pointer"
+            >
+              {isAuthenticated ? 'Start Search →' : 'Login to Start Matching →'}
+            </button>
+            {/* <Link
+              href="/recommend"
+              className="inline-block px-10 py-4 bg-gradient-to-r from-violet-600 to-pink-600 rounded-lg font-bold text-lg hover:from-violet-500 hover:to-pink-500 transition text-center"
+            >
+              Live Web Recommend ✨
+            </Link> */}
+          </div>
         </div>
       </div>
 

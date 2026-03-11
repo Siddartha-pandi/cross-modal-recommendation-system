@@ -7,6 +7,14 @@
       "hashed_password": "Siddu@12",
       "created_at": "2026-03-06T12:56:58.718959",
       "is_active": true
+    },
+    {
+      "user_id": "06f8a5e8-1792-43e4-aa72-d24e93787b03",
+      "email": "kavuri.bhavyasri2004@gmail.com",
+      "full_name": "BHAVYA SRI KAVURI",
+      "hashed_password": "Bhavya@13",
+      "created_at": "2026-03-11T12:20:57.983814",
+      "is_active": true
     }
   ]
 }

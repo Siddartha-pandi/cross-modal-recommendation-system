@@ -26,6 +26,7 @@ class CLIPModel:
         # Load CLIP model
         self.model, self.preprocess = clip.load(model_name, device=self.device)
         self.model.eval()
+        self._text_embedding_cache: Dict[str, np.ndarray] = {}
         
         # Image preprocessing
         self.image_transform = transforms.Compose([
@@ -38,6 +39,113 @@ class CLIPModel:
         ])
         
         logger.info("CLIP model loaded successfully")
+
+    async def _encode_texts_cached(self, texts: List[str]) -> np.ndarray:
+        """Encode texts and cache embeddings to avoid repeated CLIP calls."""
+        uncached = [t for t in texts if t not in self._text_embedding_cache]
+        if uncached:
+            embeddings = await self.encode_batch_texts(uncached)
+            for text, emb in zip(uncached, embeddings):
+                self._text_embedding_cache[text] = emb
+
+        return np.stack([self._text_embedding_cache[t] for t in texts], axis=0)
+
+    async def _classify_image_labels(
+        self,
+        image: Union[Image.Image, np.ndarray],
+        labels: List[str],
+        prompt_template: str = "a product photo of {}",
+    ) -> List[Tuple[str, float]]:
+        """Classify an image against a closed label set using CLIP similarities."""
+        if not labels:
+            return []
+
+        image_embedding = await self.encode_image(image)
+        prompts = [prompt_template.format(label) for label in labels]
+        text_embeddings = await self._encode_texts_cached(prompts)
+
+        # Convert cosine similarities to probabilities over the label set.
+        logits = text_embeddings @ image_embedding
+        probs = np.exp(logits - np.max(logits))
+        probs = probs / (np.sum(probs) + 1e-9)
+
+        ranked = sorted(
+            [(label, float(prob)) for label, prob in zip(labels, probs)],
+            key=lambda x: x[1],
+            reverse=True,
+        )
+        return ranked
+
+    @staticmethod
+    def _pick_confident_label(
+        ranked: List[Tuple[str, float]],
+        min_prob: float,
+        margin: float,
+    ) -> Optional[str]:
+        """Pick top label only when confidence is meaningfully above alternatives."""
+        if not ranked:
+            return None
+
+        top_label, top_prob = ranked[0]
+        second_prob = ranked[1][1] if len(ranked) > 1 else 0.0
+        if top_prob >= min_prob and (top_prob - second_prob) >= margin:
+            return top_label
+        return None
+
+    async def infer_fashion_attributes(
+        self,
+        image: Union[Image.Image, np.ndarray],
+    ) -> Dict[str, List[str]]:
+        """
+        Infer structured fashion attributes directly from image using CLIP zero-shot prompts.
+
+        Returns list-based fields compatible with the advanced retrieval pipeline.
+        """
+        categories = [
+            "sneakers", "shoes", "boots", "sandals", "heels", "loafers", "flats",
+            "t-shirt", "shirt", "dress", "jeans", "jacket", "hoodie", "kurti", "saree",
+            "bag", "watch",
+        ]
+        colors = [
+            "black", "white", "blue", "red", "green", "yellow", "brown", "grey",
+            "pink", "beige", "navy", "olive",
+        ]
+        use_types = ["casual", "sports", "formal"]
+
+        category_ranked = await self._classify_image_labels(
+            image=image,
+            labels=categories,
+            prompt_template="a fashion product photo of {}",
+        )
+        color_ranked = await self._classify_image_labels(
+            image=image,
+            labels=colors,
+            prompt_template="a close-up photo of a {} colored fashion item",
+        )
+        use_ranked = await self._classify_image_labels(
+            image=image,
+            labels=use_types,
+            prompt_template="a {} style fashion outfit",
+        )
+
+        category = self._pick_confident_label(category_ranked, min_prob=0.20, margin=0.06)
+        color = self._pick_confident_label(color_ranked, min_prob=0.20, margin=0.05)
+        use_type = self._pick_confident_label(use_ranked, min_prob=0.34, margin=0.05)
+
+        attrs: Dict[str, List[str]] = {
+            "categories": [category] if category else [],
+            "colors": [color] if color else [],
+            "use_types": [use_type] if use_type else [],
+            "occasions": [use_type] if use_type else [],
+        }
+
+        logger.info(
+            "Image attributes inferred by CLIP: categories=%s colors=%s use_types=%s",
+            attrs["categories"],
+            attrs["colors"],
+            attrs["use_types"],
+        )
+        return attrs
     
     async def encode_image(self, image: Union[Image.Image, np.ndarray]) -> np.ndarray:
         """
@@ -137,9 +245,17 @@ class CLIPModel:
     
     def get_embedding_dim(self) -> int:
         """
-        Get embedding dimension
+        Get embedding dimension.
+        ViT-B/32 → 512, ViT-L/14 → 1024, ViT-H/14 → 1024.
         """
-        return self.model.visual.output_dim if hasattr(self.model.visual, 'output_dim') else 512
+        # Try the direct attribute first (most CLIP implementations expose this)
+        if hasattr(self.model.visual, "output_dim"):
+            return int(self.model.visual.output_dim)
+        # Fallback: derive from model_name string
+        name_upper = self.model_name.upper()
+        if "VIT-L" in name_upper or "VIT-H" in name_upper:
+            return 1024
+        return 512
     
     async def fuse_embeddings(
         self, 

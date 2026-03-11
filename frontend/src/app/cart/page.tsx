@@ -178,7 +178,7 @@ export default function CartPage() {
                       {item.title}
                     </h3>
                     <p className="text-blue-400 text-lg font-semibold mb-4">
-                      ${item.price.toFixed(2)}
+                      ₹{item.price.toLocaleString('en-IN')}
                     </p>
                     <div className="flex items-center gap-4">
                       <div className="flex items-center border border-slate-600 rounded-lg">
@@ -211,7 +211,7 @@ export default function CartPage() {
                   <div className="text-right">
                     <p className="text-gray-300 text-sm mb-2">Subtotal</p>
                     <p className="text-xl font-bold text-white">
-                      ${(item.price * item.quantity).toFixed(2)}
+                      ₹{(item.price * item.quantity).toLocaleString('en-IN')}
                     </p>
                   </div>
                 </div>
@@ -226,7 +226,7 @@ export default function CartPage() {
                 <div className="space-y-3 mb-6 border-b border-slate-700 pb-6">
                   <div className="flex justify-between text-gray-300">
                     <span>Subtotal</span>
-                    <span>${totalPrice.toFixed(2)}</span>
+                    <span>₹{totalPrice.toLocaleString('en-IN')}</span>
                   </div>
                   <div className="flex justify-between text-gray-300">
                     <span>Shipping</span>
@@ -242,7 +242,7 @@ export default function CartPage() {
                   <div className="flex justify-between items-center">
                     <span className="text-lg font-semibold text-white">Total</span>
                     <span className="text-2xl font-bold text-blue-400">
-                      ${totalPrice.toFixed(2)}
+                      ₹{totalPrice.toLocaleString('en-IN')}
                     </span>
                   </div>
                 </div>

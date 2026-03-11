@@ -21,7 +21,7 @@ export default function LoginPage() {
   const [toastMessage, setToastMessage] = useState('');
   const [toastVariant, setToastVariant] = useState<'error' | 'success'>('error');
   const toastTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  
+
   const { login } = useAuth();
   const router = useRouter();
 
@@ -93,7 +93,7 @@ export default function LoginPage() {
       showToast('Login successful', 'success');
       setSuccessMessage('✓ Login successful! Redirecting...');
       setTimeout(() => {
-        router.push('/simple');
+        router.push('/recommend');
       }, 1500);
     } catch (err: any) {
       setErrors({});
@@ -110,9 +110,8 @@ export default function LoginPage() {
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-neutral-900 flex items-center justify-center px-4">
       {toastMessage && (
         <div
-          className={`fixed bottom-6 right-6 z-50 px-4 py-3 rounded-lg shadow-lg text-sm text-white ${
-            toastVariant === 'success' ? 'bg-green-500/90' : 'bg-red-500/90'
-          }`}
+          className={`fixed bottom-6 right-6 z-50 px-4 py-3 rounded-lg shadow-lg text-sm text-white ${toastVariant === 'success' ? 'bg-green-500/90' : 'bg-red-500/90'
+            }`}
         >
           {toastMessage}
         </div>
@@ -171,13 +170,12 @@ export default function LoginPage() {
                     setEmail(e.target.value);
                     validateField('email', e.target.value);
                   }}
-                  className={`w-full pl-10 pr-4 py-3 bg-slate-900 border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-transparent transition ${
-                    errors.email
-                      ? 'border-red-500 focus:ring-red-500'
-                      : email && !errors.email
+                  className={`w-full pl-10 pr-4 py-3 bg-slate-900 border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-transparent transition ${errors.email
+                    ? 'border-red-500 focus:ring-red-500'
+                    : email && !errors.email
                       ? 'border-green-500 focus:ring-green-500'
                       : 'border-slate-600 focus:ring-blue-500'
-                  }`}
+                    }`}
                   placeholder="you@example.com"
                 />
               </div>
@@ -208,13 +206,12 @@ export default function LoginPage() {
                     setPassword(e.target.value);
                     validateField('password', e.target.value);
                   }}
-                  className={`w-full pl-10 pr-10 py-3 bg-slate-900 border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-transparent transition ${
-                    errors.password
-                      ? 'border-red-500 focus:ring-red-500'
-                      : password && !errors.password
+                  className={`w-full pl-10 pr-10 py-3 bg-slate-900 border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-transparent transition ${errors.password
+                    ? 'border-red-500 focus:ring-red-500'
+                    : password && !errors.password
                       ? 'border-green-500 focus:ring-green-500'
                       : 'border-slate-600 focus:ring-blue-500'
-                  }`}
+                    }`}
                   placeholder="••••••••"
                 />
                 <button
@@ -292,29 +289,7 @@ export default function LoginPage() {
           </Link>
         </div>
 
-        {/* Security Info */}
-        <div className="bg-slate-800/50 border border-slate-700 rounded-lg p-4 space-y-3">
-          <div>
-            <p className="text-xs text-gray-400 font-semibold mb-2">
-              🔒 Security
-            </p>
-            <p className="text-xs text-gray-500">
-              Your password is encrypted and stored securely.
-            </p>
-          </div>
-          {/* Troubleshooting */}
-          <div className="pt-2 border-t border-slate-700">
-            <p className="text-xs text-gray-400 font-semibold mb-2">
-              💡 Troubleshooting
-            </p>
-            <ul className="text-xs text-gray-500 space-y-1">
-              <li>• If you see "not found" errors, ensure the backend is running on port 8000</li>
-              <li>• Check that both frontend (3000) and backend (8000) are started</li>
-              <li>• Verify your email format is correct (e.g., user@gmail.com)</li>
-              <li>• Try registering with a new email if it already exists</li>
-            </ul>
-          </div>
-        </div>
+
       </div>
     </div>
   );
