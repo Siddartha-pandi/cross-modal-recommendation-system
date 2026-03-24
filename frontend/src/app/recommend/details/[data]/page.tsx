@@ -1,0 +1,177 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { useCart } from '@/contexts/CartContext';
+import UserMenu from '@/components/UserMenu';
+
+// This interface must match the RecommendedProduct from the recommend page
+interface RecommendedProduct {
+    title: string;
+    source: string;
+    url: string;
+    image_url: string;
+    similarity_score: number;
+    visual_score?: number;
+    text_score?: number;
+    price?: string;
+    snippet?: string;
+    rank: number;
+}
+
+export default function RecommendedProductDetailPage({ params }: { params: Promise<{ data: string }> }) {
+    const { addToCart, itemCount } = useCart();
+    const [product, setProduct] = useState<RecommendedProduct | null>(null);
+    const [error, setError] = useState<string | null>(null);
+    const [cartLoading, setCartLoading] = useState(false);
+    const [addedToCart, setAddedToCart] = useState(false);
+
+    useEffect(() => {
+        params.then(resolvedParams => {
+            if (resolvedParams.data) {
+                try {
+                    const decodedData = decodeURIComponent(resolvedParams.data);
+                    const productData = JSON.parse(decodeURIComponent(atob(decodedData)));
+                    setProduct(productData);
+                } catch (e) {
+                    console.error("Failed to parse product data", e);
+                    setError("Could not load product details.");
+                }
+            }
+        }).catch(err => {
+            console.error("Failed to resolve params", err);
+            setError("Could not load product details.");
+        });
+    }, [params]);
+
+    const handleAddToCart = async () => {
+        if (!product) return;
+
+        try {
+            setCartLoading(true);
+            await addToCart({
+                product_id: product.url,
+                title: product.title,
+                price: product.price ? parseFloat(product.price.replace(/[^\d.]/g, '')) : 0,
+                quantity: 1,
+                image_url: product.image_url,
+            });
+            setAddedToCart(true);
+            setTimeout(() => setAddedToCart(false), 2000);
+        } catch (err) {
+            console.error('Failed to add to cart:', err);
+        } finally {
+            setCartLoading(false);
+        }
+    };
+
+    if (error) {
+        return (
+            <div className="min-h-screen bg-slate-950 flex items-center justify-center text-red-400">
+                <div className="text-center">
+                    <h1 className="text-2xl font-bold mb-4">{error}</h1>
+                    <Link href="/recommend" className="text-blue-400 hover:underline">
+                        Back to recommendations
+                    </Link>
+                </div>
+            </div>
+        );
+    }
+
+    if (!product) {
+        return (
+            <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+                <div className="text-center">
+                    <h1 className="text-2xl font-bold text-white mb-4">Loading Product...</h1>
+                </div>
+            </div>
+        );
+    }
+
+    const priceNum = product.price ? parseFloat(product.price.replace(/[^\d.]/g, '')) : 0;
+
+    return (
+        <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-neutral-900 text-white">
+            <nav className="bg-slate-900/80 backdrop-blur-md border-b border-slate-800 sticky top-0 z-50">
+                <div className="container mx-auto px-4 py-4 max-w-7xl flex justify-between items-center">
+                    <Link href="/recommend" className="text-2xl font-bold text-white hover:text-blue-400">
+                        Fashion Finder
+                    </Link>
+                    <div className="flex items-center gap-4">
+                        <Link href="/cart" className="relative text-white hover:text-blue-400 transition flex items-center gap-2">
+                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+                            {itemCount > 0 && (
+                                <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">{itemCount}</span>
+                            )}
+                        </Link>
+                        <UserMenu />
+                    </div>
+                </div>
+            </nav>
+
+            <div className="container mx-auto px-4 py-8 max-w-6xl">
+                <div className="mb-6">
+                    <Link href="/recommend" className="text-blue-400 hover:text-blue-300 transition">
+                        ← Back to Search
+                    </Link>
+                </div>
+
+                <div className="grid md:grid-cols-2 gap-8">
+                    <div className="bg-slate-800/50 backdrop-blur-md rounded-2xl h-3/4 w-auto border border-slate-700 p-4 overflow-hidden">
+                        <img src={product.image_url} alt={product.title} className="w-full h-full object-contain rounded-lg" />
+                    </div>
+
+                    <div className="space-y-6">
+                        <div>
+                            <h1 className="text-4xl font-bold text-white mb-2">{product.title}</h1>
+                            <p className="text-blue-400 text-lg mb-4">From {product.source}</p>
+                        </div>
+
+                        <div className="bg-slate-800/30 rounded-xl p-6 border border-slate-700">
+                            {priceNum > 0 &&
+                                <div className="text-4xl font-bold text-blue-400 mb-4">
+                                    ₹{priceNum.toLocaleString()}
+                                </div>
+                            }
+
+                            <div className="space-y-3">
+                                <button
+                                    onClick={handleAddToCart}
+                                    disabled={cartLoading}
+                                    className={`w-full py-4 px-6 rounded-lg font-semibold text-lg transition ${addedToCart ? 'bg-green-600' : 'bg-blue-600 hover:bg-blue-700'} disabled:opacity-50`}
+                                >
+                                    {cartLoading ? 'Adding...' : addedToCart ? '✓ Added' : '🛒 Add to Cart'}
+                                </button>
+                                <a
+                                    href={product.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="w-full block text-center py-4 px-6 bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white rounded-lg font-semibold text-lg transition"
+                                >
+                                    View on {product.source}
+                                </a>
+                            </div>
+                        </div>
+
+                        {product.snippet && (
+                            <div className="bg-slate-800/30 rounded-xl p-6 border border-slate-700">
+                                <h2 className="text-xl font-bold text-white mb-3">Snippet</h2>
+                                <p className="text-gray-300 leading-relaxed">{product.snippet}</p>
+                            </div>
+                        )}
+
+                        {/* <div className="bg-slate-800/30 rounded-xl p-6 border border-slate-700">
+                             <h2 className="text-xl font-bold text-white mb-3">Scores</h2>
+                             <div className="space-y-2">
+                                <p>Similarity: {(product.similarity_score * 100).toFixed(1)}%</p>
+                                {product.visual_score && <p>Visual: {(product.visual_score * 100).toFixed(1)}%</p>}
+                                {product.text_score && <p>Text: {(product.text_score * 100).toFixed(1)}%</p>}
+                             </div>
+                        </div> */}
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}

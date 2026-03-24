@@ -391,86 +391,84 @@ export default function RecommendPage() {
                 {/* ── Product Grid ── */}
                 {response && response.total_results > 0 && (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-                        {response.results.slice(0, 2).map((product) => (
-                            <div
-                                key={`${product.url}-${product.rank}`}
-                                className="group bg-slate-800/40 backdrop-blur-sm rounded-2xl border border-slate-700/60 overflow-hidden hover:border-violet-500/60 hover:shadow-xl hover:shadow-violet-500/10 transition-all duration-300 flex flex-col"
-                            >
-                                {/* Rank badge + Image */}
-                                <div className="relative overflow-hidden">
-                                    <img
-                                        src={product.image_url}
-                                        alt={product.title}
-                                        className="w-full h-52 object-cover group-hover:scale-105 transition-transform duration-500"
-                                        onError={(e) => {
-                                            (e.target as HTMLImageElement).src =
-                                                'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwOCIgZmlsbD0iIzFlMjkzYiIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmaWxsPSIjNjQ3NDhiIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiPk5vIEltYWdlPC90ZXh0Pjwvc3ZnPg==';
-                                        }}
-                                    />
-                                    {/* Rank pill */}
-                                    <div className="absolute top-2 left-2 bg-black/70 backdrop-blur-sm rounded-full w-7 h-7 flex items-center justify-center text-xs font-bold text-white border border-white/20">
-                                        #{product.rank}
+                        {response.results.map((product) => {
+                            const encodedData = btoa(encodeURIComponent(JSON.stringify(product)));
+                            const href = `/recommend/details/${encodeURIComponent(encodedData)}`;
+                            return (
+                                <Link
+                                    key={`${product.url}-${product.rank}`}
+                                    href={href}
+                                    className="group bg-slate-800/40 backdrop-blur-sm rounded-2xl border border-slate-700/60 overflow-hidden hover:border-violet-500/60 hover:shadow-xl hover:shadow-violet-500/10 transition-all duration-300 flex flex-col"
+                                >
+                                    {/* Rank badge + Image */}
+                                    <div className="relative overflow-hidden">
+                                        <img
+                                            src={product.image_url}
+                                            alt={product.title}
+                                            className="w-full h-52 object-cover group-hover:scale-105 transition-transform duration-500"
+                                            onError={(e) => {
+                                                (e.target as HTMLImageElement).src =
+                                                    'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwOCIgZmlsbD0iIzFlMjkzYiIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmaWxsPSIjNjQ3NDhiIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiPk5vIEltYWdlPC90ZXh0Pjwvc3ZnPg==';
+                                            }}
+                                        />
+                                        {/* Rank pill */}
+                                        <div className="absolute top-2 left-2 bg-black/70 backdrop-blur-sm rounded-full w-7 h-7 flex items-center justify-center text-xs font-bold text-white border border-white/20">
+                                            #{product.rank}
+                                        </div>
+                                        {/* Source badge */}
+                                        <div className="absolute top-2 right-2">
+                                            <SourceBadge source={product.source} />
+                                        </div>
                                     </div>
-                                    {/* Source badge */}
-                                    <div className="absolute top-2 right-2">
-                                        <SourceBadge source={product.source} />
-                                    </div>
-                                </div>
 
-                                {/* Content */}
-                                <div className="p-4 flex flex-col flex-1 gap-3">
+                                    {/* Content */}
+                                    <div className="p-4 flex flex-col flex-1">
 
-                                    {/* Product Description with 2-line clamp and tooltip for full text */}
-                                    <p
-                                        className="text-sm font-semibold text-white leading-snug group-hover:text-violet-300 transition-colors line-clamp-2 cursor-pointer"
-                                        title={product.snippet || product.title}
-                                    >
-                                        {product.snippet || product.title}
-                                    </p>
-
-                                    <p className="text-sm font-bold text-emerald-400">
-                                        {(() => {
-                                            // Hide price if missing, N/A, 0, or invalid
-                                            if (
-                                                product.price === undefined ||
-                                                product.price === null ||
-                                                product.price === "N/A" ||
-                                                product.price === "Price not available"
-                                            ) {
-                                                return null;
-                                            }
-                                            const priceNum = Number(product.price);
-                                            if (!isNaN(priceNum) && priceNum > 0) {
-                                                return `₹${priceNum}`;
-                                            }
-                                            // If price is not a valid positive number, hide it
-                                            return null;
-                                        })()}
-                                    </p>
-
-                                    {/* Score bars */}
-                                    {/* Score bars hidden as requested */}
-
-                                    {/* Open on site button */}
-                                    <div className="mt-auto flex items-center justify-center gap-2">
-                                        <button
-                                            className="py-2.5 px-4 rounded-xl bg-emerald-600/20 border border-emerald-500/40 text-emerald-300 text-sm font-semibold hover:bg-emerald-600/40 hover:border-emerald-400 transition-all"
-                                            onClick={() => handleAddToCart(product)}
-                                            disabled={cartLoading === product.url}
+                                        {/* Product Description with 2-line clamp and tooltip for full text */}
+                                        <p
+                                            className="text-sm font-semibold text-white leading-snug group-hover:text-violet-300 transition-colors line-clamp-2 cursor-pointer"
+                                            title={product.snippet || product.title}
                                         >
-                                            {cartLoading === product.url ? 'Adding...' : addedItems.has(product.url) ? 'Added!' : 'Add to Cart'}
-                                        </button>
-                                        <button
-                                            className="py-2.5 px-4 rounded-xl bg-pink-600/20 border border-pink-500/40 text-pink-300 text-sm font-semibold hover:bg-pink-600/40 hover:border-pink-400 transition-all"
-                                            onClick={() => handleBuyNow(product)}
-                                            disabled={cartLoading === product.url}
-                                        >
-                                            {cartLoading === product.url ? 'Processing...' : 'Buy Now'}
-                                        </button>
+                                            {product.snippet || product.title}
+                                        </p>
+
+                                        {/* Score bars */}
+                                        {/* Score bars hidden as requested */}
+
+                                        {/* Price and buttons */}
+                                        <div className="mt-auto pt-4">
+                                            <p className="text-lg font-bold text-center mb-3">
+                                                {(() => {
+                                                    if (product.price && product.price !== '0') {
+                                                        const priceNum = parseFloat(product.price.replace(/[^\d.]/g, ''));
+                                                        if (!isNaN(priceNum) && priceNum > 0) {
+                                                            return <span className="text-emerald-400">{`₹${priceNum.toLocaleString('en-IN')}`}</span>;
+                                                        }
+                                                    }
+                                                    return <span className="text-slate-500 text-sm font-medium">Price N/A</span>;
+                                                })()}
+                                            </p>
+                                            <div className="flex items-center justify-center gap-2">
+                                                <button
+                                                    className="py-2.5 px-4 rounded-xl bg-emerald-600/20 border border-emerald-500/40 text-emerald-300 text-sm font-semibold hover:bg-emerald-600/40 hover:border-emerald-400 transition-all"
+                                                    onClick={(e) => { e.preventDefault(); handleAddToCart(product); }}
+                                                    disabled={cartLoading === product.url}
+                                                >
+                                                    {cartLoading === product.url ? 'Adding...' : addedItems.has(product.url) ? 'Added!' : 'Add to Cart'}
+                                                </button>
+                                                <button
+                                                    className="py-2.5 px-4 rounded-xl bg-pink-600/20 border border-pink-500/40 text-pink-300 text-sm font-semibold hover:bg-pink-600/40 hover:border-pink-400 transition-all"
+                                                    onClick={(e) => { e.preventDefault(); handleBuyNow(product); }}
+                                                    disabled={cartLoading === product.url}
+                                                >
+                                                    {cartLoading === product.url ? 'Processing...' : 'Buy Now'}
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                            </div>
-                        ))}
+                                </Link>
+                            );
+                        })}
                     </div>
                 )}
 

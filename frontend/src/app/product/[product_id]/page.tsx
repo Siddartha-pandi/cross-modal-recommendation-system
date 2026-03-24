@@ -148,7 +148,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ produc
         {/* Navigation */}
         <nav className="bg-slate-900/80 backdrop-blur-md border-b border-slate-800 sticky top-0 z-50">
           <div className="container mx-auto px-4 py-4 max-w-7xl flex justify-between items-center">
-            <Link href="/simple" className="text-2xl font-bold text-white hover:text-blue-400">
+            <Link href="/recommend" className="text-2xl font-bold text-white hover:text-blue-400">
               Fashion Finder
             </Link>
             <div className="flex items-center gap-4">
@@ -174,7 +174,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ produc
           <div className="bg-red-500/20 border border-red-500 rounded-xl p-8">
             <h1 className="text-3xl font-bold text-red-300 mb-4">{error}</h1>
             <Link
-              href="/simple"
+              href="/recommend"
               className="inline-block mt-4 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition"
             >
               Back to Search
@@ -194,7 +194,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ produc
       {/* Navigation */}
       <nav className="bg-slate-900/80 backdrop-blur-md border-b border-slate-800 sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 max-w-7xl flex justify-between items-center">
-          <Link href="/simple" className="text-2xl font-bold text-white hover:text-blue-400">
+          <Link href="/recommend" className="text-2xl font-bold text-white hover:text-blue-400">
             Fashion Finder
           </Link>
           <div className="flex items-center gap-4">

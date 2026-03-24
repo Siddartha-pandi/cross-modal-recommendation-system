@@ -113,7 +113,7 @@ export default function OrdersPage() {
           </Link>
           <div className="flex gap-6">
             <Link
-              href="/simple"
+              href="/recommend"
               className="text-gray-300 hover:text-white transition"
             >
               Shop
@@ -142,7 +142,7 @@ export default function OrdersPage() {
             <h2 className="text-2xl font-semibold text-white mb-4">No orders yet</h2>
             <p className="text-gray-400 mb-6">Start shopping to place your first order</p>
             <Link
-              href="/simple"
+              href="/recommend"
               className="inline-block px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition"
             >
               Start Shopping

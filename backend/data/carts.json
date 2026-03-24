@@ -1,23 +1,16 @@
 {
   "06f8a5e8-1792-43e4-aa72-d24e93787b03": {
-    "items": [
-      {
-        "product_id": "https://www.amazon.in/Maison-Treasure-Lightweight-Comfortable-Cusioned/dp/B0F4XZCC5L",
-        "title": "Buy Maison Treasure Black Leather Sneaker for Men's | Lightweight  Comfortable & Style with Soft Cusioned Insole | Low-Top Premium Sneaker for  Casual Outing (Black, UK Footwear Size System, Adult, Men, Numeric,",
-        "price": 0.0,
-        "quantity": 1,
-        "image_url": "https://m.media-amazon.com/images/I/61D5DLU6fmL._AC_UY1000_.jpg"
-      },
-      {
-        "product_id": "https://www.amazon.in/Sports-Running-Walking-Casual-Sneakers/dp/B0FRSBJD9L",
-        "title": "Buy Black Men Sports Running | Walking | Casual Wear | Party Shoes for Men  | Sneakers for Men (Black, UK Footwear Size System, Adult, Men, Numeric,  Medium, 6) at Amazon.in",
-        "price": 0.0,
-        "quantity": 1,
-        "image_url": "https://m.media-amazon.com/images/I/51S-UTBiNiL._AC_UY1000_.jpg"
-      }
-    ]
+    "items": []
   },
   "3510578e-e760-425d-8f3c-2786b4e96a36": {
-    "items": []
+    "items": [
+      {
+        "product_id": "https://www.ajio.com/puma-suede-heart-floral-lace-up-casual-shoes/p/460423458002?srsltid=AfmBOoqqgIUElHhlp9_6FTF19BKx6sDZAKJLAKyk-tblVZ6RuBfmYr8a",
+        "title": "Suede Heart Floral Lace-Up Casual Shoes",
+        "price": 0.0,
+        "quantity": 1,
+        "image_url": "https://assets.ajio.com/medias/sys_master/root/hcd/h06/15095908270110/-473Wx593H-460423458-black-MODEL.jpg"
+      }
+    ]
   }
 }

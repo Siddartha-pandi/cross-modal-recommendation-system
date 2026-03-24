@@ -168,7 +168,7 @@ export default function OrderDetailsPage({ params }: { params: { order_id: strin
             Fashion Finder
           </Link>
           <Link
-            href="/simple"
+            href="/recommend"
             className="text-gray-300 hover:text-white transition"
           >
             Continue Shopping
@@ -261,7 +261,7 @@ export default function OrderDetailsPage({ params }: { params: { order_id: strin
         {/* Actions */}
         <div className="flex gap-4 justify-center mb-8">
           <Link
-            href="/simple"
+            href="/recommend"
             className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition"
           >
             Continue Shopping
