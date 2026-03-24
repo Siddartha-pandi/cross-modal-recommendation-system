@@ -52,22 +52,7 @@ function SourceBadge({ source }: { source: string }) {
     );
 }
 
-function ScoreBar({ label, value, color }: { label: string; value: number; color: string }) {
-    return (
-        <div className="space-y-1">
-            <div className="flex justify-between items-center">
-                <span className="text-[10px] text-slate-500 uppercase tracking-wider font-semibold">{label}</span>
-                <span className="text-[11px] font-bold text-white">{(value * 100).toFixed(1)}%</span>
-            </div>
-            <div className="h-1.5 bg-slate-700 rounded-full overflow-hidden">
-                <div
-                    className={`h-full rounded-full transition-all duration-700 ${color}`}
-                    style={{ width: `${Math.min(value * 100, 100)}%` }}
-                />
-            </div>
-        </div>
-    );
-}
+
 
 // ── Main Page ─────────────────────────────────────────────────────────────────
 
@@ -391,7 +376,7 @@ export default function RecommendPage() {
                 {/* ── Product Grid ── */}
                 {response && response.total_results > 0 && (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-                        {response.results.map((product) => {
+                        {response.results.slice(0,2).map((product) => {
                             const encodedData = btoa(encodeURIComponent(JSON.stringify(product)));
                             const href = `/recommend/details/${encodeURIComponent(encodedData)}`;
                             return (
