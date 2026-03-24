@@ -146,14 +146,7 @@ class CartStore:
         if user_id in carts:
             for item in carts[user_id]["items"]:
                 if item["product_id"] == product_id:
-                    if quantity <= 0:
-                        # Remove if quantity is 0 or less
-                        carts[user_id]["items"] = [
-                            it for it in carts[user_id]["items"] 
-                            if it["product_id"] != product_id
-                        ]
-                    else:
-                        item["quantity"] = quantity
+                    item["quantity"] = quantity
                     break
         
         CartStore._save_carts(carts)

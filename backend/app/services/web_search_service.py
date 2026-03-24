@@ -1,3 +1,4 @@
+
 """
 Web Search Service
 Multi-provider fashion product image search with automatic fallback:
@@ -5,6 +6,49 @@ Multi-provider fashion product image search with automatic fallback:
   1. DuckDuckGo (ddg_images via duckduckgo_search) — no API key, retry-aware
   2. Google Custom Search API                       — 100/day free (optional)
   3. SerpAPI                                        — 100/month free (optional)
+
+Provider selected by SEARCH_PROVIDER in .env.
+Primary flow for this project uses SerpAPI and Google Custom Search.
+"""
+import asyncio
+import logging
+import time
+import random
+from concurrent.futures import ThreadPoolExecutor
+from typing import List, Optional, Dict, Any
+from dataclasses import dataclass, field
+
+from app.config.settings import settings
+
+logger = logging.getLogger(__name__)
+
+_executor = ThreadPoolExecutor(max_workers=2)
+
+def _extract_price(item: dict) -> Optional[str]:
+    """Try to extract price from item['price'], snippet, or title."""
+    # 1. Direct price field
+    price = item.get("price")
+    if price not in [None, '', 0, 0.0]:
+        return str(price)
+    # 2. Try snippet
+    snippet = item.get("snippet", "")
+    # 3. Try title
+    title = item.get("title", "")
+    import re
+    for text in [snippet, title]:
+        # Look for patterns like ₹1234, Rs. 1234, INR 1234
+        match = re.search(r'(₹|Rs\.?|INR)[ ]?([0-9,]+)', text)
+        if match:
+            return match.group(1) + match.group(2).replace(",", "")
+    return None
+
+"""
+Web Search Service
+Multi-provider fashion product image search with automatic fallback:
+
+    1. DuckDuckGo (ddg_images via duckduckgo_search) — no API key, retry-aware
+    2. Google Custom Search API                       — 100/day free (optional)
+    3. SerpAPI                                        — 100/month free (optional)
 
 Provider selected by SEARCH_PROVIDER in .env.
 Primary flow for this project uses SerpAPI and Google Custom Search.
@@ -247,7 +291,8 @@ async def _search_serpapi(query: str, num: int) -> List[CandidateProduct]:
             title=title, url=link, image_url=img,
             source=_extract_source(link),
             position=len(candidates),
-            price=item.get("price"), snippet=item.get("snippet"),
+            price=_extract_price(item) or '0',
+            snippet=item.get("snippet"),
         ))
 
         if len(candidates) >= target_count:
@@ -278,7 +323,7 @@ async def _search_serpapi(query: str, num: int) -> List[CandidateProduct]:
                     image_url=img,
                     source=_extract_source(link),
                     position=len(candidates),
-                    price=item.get("price"),
+                    price=_extract_price(item) or '0',
                     snippet=item.get("snippet"),
                     extra={"engine": "google_images"},
                 ))

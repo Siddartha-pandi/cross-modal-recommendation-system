@@ -58,7 +58,7 @@ export default function UserMenu() {
           </div>
           
           <Link
-            href="/simple"
+            href="/recommend"
             className="block px-4 py-2 text-sm text-gray-300 hover:bg-slate-700"
             onClick={() => setIsOpen(false)}
           >

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
+import UserMenu from '@/components/UserMenu';
 import { useCart } from '@/contexts/CartContext';
 import { useRouter } from 'next/navigation';
 
@@ -16,7 +17,7 @@ interface CheckoutFormData {
 
 export default function CartPage() {
   const { isAuthenticated, isLoading } = useAuth();
-  const { items, totalPrice, removeFromCart, updateQuantity, loading: cartLoading } = useCart();
+  const { items, totalPrice, removeFromCart, updateQuantity, clearCart, loading: cartLoading } = useCart();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -101,6 +102,9 @@ export default function CartPage() {
       setSuccess(true);
       setShowCheckout(false);
 
+      // Clear the cart on the frontend
+      await clearCart();
+
       // Redirect to order confirmation after 2 seconds
       setTimeout(() => {
         console.log('Redirecting to order:', `/orders/${order.order_id}`);
@@ -122,14 +126,15 @@ export default function CartPage() {
           <Link href="/" className="text-2xl font-bold text-white hover:text-blue-400">
             Fashion Finder
           </Link>
-          <div className="flex gap-6">
+          <div className="flex gap-6 items-center">
             <Link
-              href="/simple"
+              href="/recommend"
               className="text-gray-300 hover:text-white transition"
             >
               Continue Shopping
             </Link>
             <span className="text-gray-300">Cart ({items.length})</span>
+            <UserMenu />
           </div>
         </div>
       </nav>
@@ -153,7 +158,7 @@ export default function CartPage() {
           <div className="text-center py-12">
             <h2 className="text-2xl font-semibold text-white mb-4">Your cart is empty</h2>
             <Link
-              href="/simple"
+              href="/recommend"
               className="inline-block px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition"
             >
               Start Shopping

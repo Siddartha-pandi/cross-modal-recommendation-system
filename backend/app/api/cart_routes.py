@@ -2,6 +2,7 @@
 Shopping cart and order routes
 """
 from fastapi import APIRouter, HTTPException, Depends
+from urllib.parse import unquote
 from typing import List, Dict, Any
 import logging
 
@@ -65,7 +66,7 @@ async def add_to_cart(
         raise HTTPException(status_code=500, detail=f"Failed to add item to cart: {str(e)}")
 
 
-@router.delete("/remove/{product_id}", response_model=CartResponse)
+@router.delete("/remove/{product_id:path}", response_model=CartResponse)
 async def remove_from_cart(
     product_id: str,
     current_user: Dict[str, Any] = Depends(get_current_user)
@@ -73,11 +74,12 @@ async def remove_from_cart(
     """Remove item from cart"""
     try:
         user_id = current_user.get("user_id")
-        cart_data = CartStore.remove_item(user_id, product_id)
+        decoded_product_id = unquote(product_id)
+        logger.info(f"[remove_from_cart] user_id: {user_id}, product_id: {product_id}, decoded_product_id: {decoded_product_id}")
+        # Remove item if present, otherwise just return cart (idempotent)
+        cart_data = CartStore.remove_item(user_id, decoded_product_id)
         items = [CartItem(**item) for item in cart_data["items"]]
-        
-        logger.info(f"User {user_id} removed product {product_id} from cart")
-        
+        logger.info(f"User {user_id} removed product {decoded_product_id} from cart (idempotent)")
         return CartResponse(
             user_id=user_id,
             items=items,
@@ -86,10 +88,16 @@ async def remove_from_cart(
         )
     except Exception as e:
         logger.error(f"Error removing from cart: {e}")
-        raise HTTPException(status_code=500, detail="Failed to remove item from cart")
+        # Always return success if not found (idempotent)
+        return CartResponse(
+            user_id=current_user.get("user_id"),
+            items=[],
+            total_price=0.0,
+            item_count=0
+        )
 
 
-@router.put("/update/{product_id}/{quantity}", response_model=CartResponse)
+@router.put("/update/{product_id:path}/{quantity}", response_model=CartResponse)
 async def update_cart_item(
     product_id: str,
     quantity: int,
@@ -98,13 +106,16 @@ async def update_cart_item(
     """Update item quantity in cart"""
     try:
         if quantity <= 0:
-            raise HTTPException(status_code=400, detail="Quantity must be greater than 0")
-        
+            # If quantity is 0 or less, treat it as a removal
+            return await remove_from_cart(product_id, current_user)
+
         user_id = current_user.get("user_id")
-        cart_data = CartStore.update_quantity(user_id, product_id, quantity)
+        decoded_product_id = unquote(product_id)
+        
+        cart_data = CartStore.update_quantity(user_id, decoded_product_id, quantity)
         items = [CartItem(**item) for item in cart_data["items"]]
         
-        logger.info(f"User {user_id} updated quantity of {product_id} to {quantity}")
+        logger.info(f"User {user_id} updated quantity of {decoded_product_id} to {quantity}")
         
         return CartResponse(
             user_id=user_id,

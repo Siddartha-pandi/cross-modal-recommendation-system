@@ -235,7 +235,9 @@ class FAISSIndex:
             Product metadata dict or None if not found
         """
         for metadata in self.product_metadata:
-            if str(metadata.get('product_id')) == str(product_id):
+            if str(metadata.get('product_id')) == str(product_id) or str(metadata.get('id')) == str(product_id):
+                if 'id' in metadata and 'product_id' not in metadata:
+                    metadata['product_id'] = metadata['id']
                 return metadata
         
         logger.warning(f"Product {product_id} not found in index")

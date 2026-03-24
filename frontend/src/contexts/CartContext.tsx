@@ -127,11 +127,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const removeFromCart = async (productId: string) => {
     try {
+      console.log('[removeFromCart] productId:', productId);
       setLoading(true);
       const token = localStorage.getItem('auth_token');
       if (!token) throw new Error('Not authenticated');
 
-      const response = await fetch(`${API_URL}/cart/remove/${productId}`, {
+      // Always encode the productId for URL safety
+      const encodedProductId = encodeURIComponent(productId);
+      const response = await fetch(`${API_URL}/cart/remove/${encodedProductId}`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -139,7 +142,19 @@ export function CartProvider({ children }: { children: ReactNode }) {
         },
       });
 
-      if (!response.ok) throw new Error('Failed to remove from cart');
+      if (!response.ok) {
+        let backendMsg = 'Failed to remove from cart';
+        try {
+          const errData = await response.json();
+          if (errData && errData.detail) backendMsg = errData.detail;
+        } catch (e) {
+          // fallback to text if not JSON
+          try {
+            backendMsg = await response.text();
+          } catch {}
+        }
+        throw new Error(backendMsg);
+      }
 
       const data = await response.json();
       setItems(data.items || []);
@@ -160,8 +175,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
       const token = localStorage.getItem('auth_token');
       if (!token) throw new Error('Not authenticated');
 
+      const encodedProductId = encodeURIComponent(productId);
       const response = await fetch(
-        `${API_URL}/cart/update/${productId}/${quantity}`,
+        `${API_URL}/cart/update/${encodedProductId}/${quantity}`,
         {
           method: 'PUT',
           headers: {

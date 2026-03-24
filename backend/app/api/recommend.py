@@ -50,7 +50,7 @@ class RecommendedProduct(BaseModel):
     similarity_score: float
     visual_score: Optional[float] = None
     text_score: Optional[float] = None
-    price: Optional[str] = None
+    price: str  # Now compulsory
     currency: Optional[str] = "INR"
     snippet: Optional[str] = None
     rank: int
@@ -257,7 +257,7 @@ async def recommend(
             similarity_score=r.similarity_score,
             visual_score=r.visual_score,
             text_score=r.text_score,
-            price=r.price,
+            price=str(r.price) if r.price not in [None, '', 0, 0.0] else '0',
             snippet=r.snippet,
             rank=r.position,
         )

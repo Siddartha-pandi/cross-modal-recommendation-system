@@ -220,7 +220,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ produc
       <div className="container mx-auto px-4 py-8 max-w-6xl">
         {/* Breadcrumb */}
         <div className="mb-6">
-          <Link href="/simple" className="text-blue-400 hover:text-blue-300 transition">
+          <Link href="/recommend" className="text-blue-400 hover:text-blue-300 transition">
             ← Back to Search
           </Link>
         </div>

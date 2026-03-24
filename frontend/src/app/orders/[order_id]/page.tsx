@@ -139,7 +139,7 @@ export default function OrderDetailsPage({ params }: { params: { order_id: strin
                 View All Orders
               </Link>
               <Link
-                href="/simple"
+                href="/recommend"
                 className="px-6 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition"
               >
                 Continue Shopping

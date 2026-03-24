@@ -5,7 +5,6 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useCart } from '@/contexts/CartContext';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import UserMenu from '@/components/UserMenu';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001/api/v1';
 
@@ -20,7 +19,6 @@ interface RecommendedProduct {
     visual_score?: number;
     text_score?: number;
     price?: string;
-    currency?: string;
     snippet?: string;
     rank: number;
 }
@@ -54,21 +52,21 @@ function SourceBadge({ source }: { source: string }) {
     );
 }
 
-
-function formatPrice(price?: string, currency?: string) {
-    if (!price) return null;
-
-    // If it already has a currency symbol (₹, $, etc.), just return it
-    if (/[₹$€£]/.test(price)) return price;
-
-    // Otherwise, assume INR if it's just a number or if currency is INR
-    const numericPart = price.replace(/[^\d.]/g, '');
-    if (numericPart && !isNaN(parseFloat(numericPart))) {
-        const symbol = (currency === 'USD' || price.includes('$')) ? '$' : '₹';
-        return `${symbol}${parseFloat(numericPart).toLocaleString('en-IN')}`;
-    }
-
-    return price;
+function ScoreBar({ label, value, color }: { label: string; value: number; color: string }) {
+    return (
+        <div className="space-y-1">
+            <div className="flex justify-between items-center">
+                <span className="text-[10px] text-slate-500 uppercase tracking-wider font-semibold">{label}</span>
+                <span className="text-[11px] font-bold text-white">{(value * 100).toFixed(1)}%</span>
+            </div>
+            <div className="h-1.5 bg-slate-700 rounded-full overflow-hidden">
+                <div
+                    className={`h-full rounded-full transition-all duration-700 ${color}`}
+                    style={{ width: `${Math.min(value * 100, 100)}%` }}
+                />
+            </div>
+        </div>
+    );
 }
 
 // ── Main Page ─────────────────────────────────────────────────────────────────
@@ -86,6 +84,9 @@ export default function RecommendPage() {
     const { addToCart, itemCount } = useCart();
     const router = useRouter();
     const { user } = useAuth();
+    // UserMenu import
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const UserMenu = require('@/components/UserMenu').default;
     const handleAddToCart = async (product: RecommendedProduct) => {
         try {
             setCartLoading(product.url);
@@ -192,17 +193,14 @@ export default function RecommendPage() {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-neutral-900 text-white">
-
-            {/* ── Navigation ── */}
-            <nav className="sticky top-0 z-50 bg-slate-900/80 backdrop-blur-md border-b border-slate-800">
-                <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+            {/* Navigation */}
+            <nav className="bg-slate-900/80 backdrop-blur-md border-b border-slate-800 sticky top-0 z-50">
+                <div className="container mx-auto px-4 py-4 max-w-7xl flex justify-between items-center">
                     <Link href="/" className="text-2xl font-bold text-white hover:text-blue-400">
                         Fashion Finder
                     </Link>
                     <div className="flex items-center gap-4">
-                        {/* <span className="text-sm font-semibold text-violet-400 border border-violet-500/40 px-3 py-1 rounded-full bg-violet-500/10">
-                            ✨ Live Recommend
-                        </span> */}
+                        {/* FAISS Search and Live Web Recommend buttons hidden on this page */}
                         <Link
                             href="/cart"
                             className="relative text-white hover:text-blue-400 transition flex items-center gap-2"
@@ -224,14 +222,14 @@ export default function RecommendPage() {
             <div className="max-w-7xl mx-auto px-4 py-10">
 
                 {/* ── Header ── */}
-                <div className="mb-12">
-                    <h1 className="text-5xl font-bold text-white mb-4">Fashion Discovery</h1>
-                    <p className="text-gray-400 text-lg">
-                        Search with text & images
+                <div className="mb-10 text-center flex flex-col items-center justify-center">
+                    <h1 className="text-5xl md:text-6xl font-extrabold mb-4 bg-gradient-to-r from-violet-400 via-pink-400 to-blue-400 bg-clip-text text-transparent leading-tight">
+                        Fashion Discovery
+                    </h1>
+                    <p className="text-slate-400 text-lg max-w-2xl mx-auto mb-2">
+                        Search with text & image
                     </p>
-                    {user && (
-                        <p className="text-gray-300 mt-4">Welcome, {user.full_name}!</p>
-                    )}
+                    <span className="text-white text-base font-semibold mt-2">Welcome, {user?.full_name ? user.full_name : 'Guest'}!</span>
                 </div>
 
                 {/* ── Search Card ── */}
@@ -263,10 +261,10 @@ export default function RecommendPage() {
                             </label>
                             <div
                                 className={`relative min-h-[120px] rounded-xl border-2 border-dashed transition-all ${dragOver
-                                    ? 'border-violet-400 bg-violet-500/10'
-                                    : imagePreview
-                                        ? 'border-slate-600 bg-slate-900'
-                                        : 'border-slate-600 bg-slate-900/50 hover:border-slate-500 hover:bg-slate-800/50'
+                                        ? 'border-violet-400 bg-violet-500/10'
+                                        : imagePreview
+                                            ? 'border-slate-600 bg-slate-900'
+                                            : 'border-slate-600 bg-slate-900/50 hover:border-slate-500 hover:bg-slate-800/50'
                                     }`}
                                 onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
                                 onDragLeave={() => setDragOver(false)}
@@ -326,7 +324,7 @@ export default function RecommendPage() {
                                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                                 </svg>
-                                Searching ...
+                                Searching......
                             </>
                         ) : (
                             <>
@@ -349,9 +347,10 @@ export default function RecommendPage() {
                 {response && (
                     <div className="mb-6 flex flex-wrap gap-4 items-center">
                         <h2 className="text-2xl font-bold text-white">
-                            {response.total_results > 0
+                            {/* {response.total_results > 0
                                 ? `${response.total_results} Recommendations`
-                                : 'No Results Found'}
+                                : 'No Results Found'} */}
+                                Recommendations
                         </h2>
                         <div className="flex flex-wrap gap-2 ml-auto">
                             {response.search_phrase && (
@@ -362,12 +361,12 @@ export default function RecommendPage() {
                             <span className="text-xs bg-slate-800 border border-slate-700 text-slate-400 px-3 py-1 rounded-full">
                                 {response.model_used} · {response.search_type}
                             </span>
-                            <span className="text-xs bg-slate-800 border border-slate-700 text-slate-400 px-3 py-1 rounded-full">
+                            {/* <span className="text-xs bg-slate-800 border border-slate-700 text-slate-400 px-3 py-1 rounded-full">
                                 ⏱ {response.query_time.toFixed(2)}s
                             </span>
                             <span className="text-xs bg-slate-800 border border-slate-700 text-slate-400 px-3 py-1 rounded-full">
                                 {response.total_candidates} candidates scanned
-                            </span>
+                            </span> */}
                         </div>
                     </div>
                 )}
@@ -420,13 +419,34 @@ export default function RecommendPage() {
 
                                 {/* Content */}
                                 <div className="p-4 flex flex-col flex-1 gap-3">
-                                    <h3 className="text-sm font-semibold text-white leading-snug group-hover:text-violet-300 transition-colors">
-                                        {product.title}
-                                    </h3>
 
-                                    {product.price && (
-                                        <p className="text-sm font-bold text-emerald-400">{formatPrice(product.price, product.currency)}</p>
-                                    )}
+                                    {/* Product Description with 2-line clamp and tooltip for full text */}
+                                    <p
+                                        className="text-sm font-semibold text-white leading-snug group-hover:text-violet-300 transition-colors line-clamp-2 cursor-pointer"
+                                        title={product.snippet || product.title}
+                                    >
+                                        {product.snippet || product.title}
+                                    </p>
+
+                                    <p className="text-sm font-bold text-emerald-400">
+                                        {(() => {
+                                            // Hide price if missing, N/A, 0, or invalid
+                                            if (
+                                                product.price === undefined ||
+                                                product.price === null ||
+                                                product.price === "N/A" ||
+                                                product.price === "Price not available"
+                                            ) {
+                                                return null;
+                                            }
+                                            const priceNum = Number(product.price);
+                                            if (!isNaN(priceNum) && priceNum > 0) {
+                                                return `₹${priceNum}`;
+                                            }
+                                            // If price is not a valid positive number, hide it
+                                            return null;
+                                        })()}
+                                    </p>
 
                                     {/* Score bars */}
                                     {/* Score bars hidden as requested */}
